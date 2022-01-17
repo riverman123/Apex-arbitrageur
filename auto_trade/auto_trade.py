@@ -31,7 +31,7 @@ def auto_trade_slow():
         # The market price fluctuates more than 10% , break
         if ((mark_price - index_price) / index_price) <= -0.1:
             break
-    assert 1
+    return_margin(SETTING["WALLET_ADDRESS"])
 
 def quick_increase():
     for i in range(10):
@@ -66,6 +66,9 @@ def quick_reduce():
     margin_test.closePosition(trader=SETTING["WALLET_ADDRESS"],
                               quoteAmount=abs(int(position_info[1] / (10 ** 6))))
 
+def return_margin(trader):
+    user_wthdrawAble = margin_test.getWithdrawable(trader)
+    margin_test.removeMargin(trader=trader,withdrawAmount=user_wthdrawAble)
 
 
 if __name__ == '__main__':
