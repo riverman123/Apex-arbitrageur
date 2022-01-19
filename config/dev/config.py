@@ -11,7 +11,7 @@ TOKEN_INFO = {
 }
 
 MARGIN_CONTRACT_INFO = {
-    "CONTRACT_ADDRESS": "0x0ee4ad6Cb756D1a548E359BB8a6dF86d4798df89",
+    "CONTRACT_ADDRESS": "0x3071A809B1f5918F599A48D4975a0DfD4316150F",
     "CONTRACT_ABI":"""[
 	{
 		"anonymous": false,
@@ -53,156 +53,6 @@ MARGIN_CONTRACT_INFO = {
 			}
 		],
 		"name": "AddMargin",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"components": [
-					{
-						"internalType": "int256",
-						"name": "quoteSize",
-						"type": "int256"
-					},
-					{
-						"internalType": "int256",
-						"name": "baseSize",
-						"type": "int256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "tradeSize",
-						"type": "uint256"
-					}
-				],
-				"indexed": false,
-				"internalType": "struct IMargin.Position",
-				"name": "position",
-				"type": "tuple"
-			}
-		],
-		"name": "BeforeAddMargin",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"components": [
-					{
-						"internalType": "int256",
-						"name": "quoteSize",
-						"type": "int256"
-					},
-					{
-						"internalType": "int256",
-						"name": "baseSize",
-						"type": "int256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "tradeSize",
-						"type": "uint256"
-					}
-				],
-				"indexed": false,
-				"internalType": "struct IMargin.Position",
-				"name": "position",
-				"type": "tuple"
-			}
-		],
-		"name": "BeforeClosePosition",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"components": [
-					{
-						"internalType": "int256",
-						"name": "quoteSize",
-						"type": "int256"
-					},
-					{
-						"internalType": "int256",
-						"name": "baseSize",
-						"type": "int256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "tradeSize",
-						"type": "uint256"
-					}
-				],
-				"indexed": false,
-				"internalType": "struct IMargin.Position",
-				"name": "position",
-				"type": "tuple"
-			}
-		],
-		"name": "BeforeLiquidate",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"components": [
-					{
-						"internalType": "int256",
-						"name": "quoteSize",
-						"type": "int256"
-					},
-					{
-						"internalType": "int256",
-						"name": "baseSize",
-						"type": "int256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "tradeSize",
-						"type": "uint256"
-					}
-				],
-				"indexed": false,
-				"internalType": "struct IMargin.Position",
-				"name": "position",
-				"type": "tuple"
-			}
-		],
-		"name": "BeforeOpenPosition",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"components": [
-					{
-						"internalType": "int256",
-						"name": "quoteSize",
-						"type": "int256"
-					},
-					{
-						"internalType": "int256",
-						"name": "baseSize",
-						"type": "int256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "tradeSize",
-						"type": "uint256"
-					}
-				],
-				"indexed": false,
-				"internalType": "struct IMargin.Position",
-				"name": "position",
-				"type": "tuple"
-			}
-		],
-		"name": "BeforeRemoveMargin",
 		"type": "event"
 	},
 	{
@@ -383,9 +233,27 @@ MARGIN_CONTRACT_INFO = {
 				"type": "address"
 			},
 			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
 				"indexed": false,
 				"internalType": "uint256",
 				"name": "withdrawAmount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "int256",
+				"name": "fundingFee",
+				"type": "int256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "withdrawAmountFromMargin",
 				"type": "uint256"
 			},
 			{
@@ -524,6 +392,25 @@ MARGIN_CONTRACT_INFO = {
 				"type": "address"
 			}
 		],
+		"name": "calUnrealizedPnl",
+		"outputs": [
+			{
+				"internalType": "int256",
+				"name": "",
+				"type": "int256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "trader",
+				"type": "address"
+			}
+		],
 		"name": "canLiquidate",
 		"outputs": [
 			{
@@ -580,6 +467,19 @@ MARGIN_CONTRACT_INFO = {
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getNewLatestCPF",
+		"outputs": [
+			{
+				"internalType": "int256",
+				"name": "",
+				"type": "int256"
 			}
 		],
 		"stateMutability": "view",
@@ -728,6 +628,30 @@ MARGIN_CONTRACT_INFO = {
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "bool",
+				"name": "isLong",
+				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "quoteAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "querySwapBaseWithAmm",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "quoteToken",
 		"outputs": [
@@ -748,6 +672,11 @@ MARGIN_CONTRACT_INFO = {
 				"type": "address"
 			},
 			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
 				"internalType": "uint256",
 				"name": "withdrawAmount",
 				"type": "uint256"
@@ -757,12 +686,25 @@ MARGIN_CONTRACT_INFO = {
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "updateCPF",
+		"outputs": [
+			{
+				"internalType": "int256",
+				"name": "",
+				"type": "int256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ]"""
 }
 
 ROUTER_CONTRACT_INFO = {
-    "CONTRACT_ADDRESS": "0xFC39A7E3f7980266f1CB99c37AE67Ab0D707f86e",
+    "CONTRACT_ADDRESS": "0x09eE5a984EB20E4A44829f827cb7C597Dbc4Caeb",
     "CONTRACT_ABI":"""[
 	{
 		"inputs": [],
@@ -1411,7 +1353,7 @@ ROUTER_CONTRACT_INFO = {
 }
 
 PRICEORACLE_CONTRACT_INFO = {
-    "CONTRACT_ADDRESS": "0xD247a96ec94794d06AcD793528f64a00b0E406D6",
+    "CONTRACT_ADDRESS": "0xB89280BA3c2057c68458b6f462Fc81b9a632bB21",
     "CONTRACT_ABI":"""[
 	{
 		"inputs": [
@@ -1555,7 +1497,7 @@ PRICEORACLE_CONTRACT_INFO = {
 }
 
 AMM_CONTRACT_INFO = {
-    "CONTRACT_ADDRESS": "0xE4E37877C96391B8d171D5efbFF5105E03ea63D9",
+    "CONTRACT_ADDRESS": "0xf600e88e55db6524AC8304901dc550610Fa3849E",
     "CONTRACT_ABI":"""[
 	{
 		"anonymous": false,
