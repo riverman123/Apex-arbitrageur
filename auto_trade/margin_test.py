@@ -10,7 +10,7 @@ contractObj = w3.eth.contract(address=CONTRACT_INFO["CONTRACT_ADDRESS"], abi=CON
 # add margin to margin contract
 def addMargin(trader, quoteAmount):
     tx = contractObj.functions.addMargin(trader,quoteAmount*(10**6)).buildTransaction({
-        'from': SETTING["WALLET_ADDRESS"],
+        'from': trader,
         'gas': 1200000
     })
     tx_hash = trade_helper.sendTransation(tx)
@@ -20,7 +20,7 @@ def addMargin(trader, quoteAmount):
 # use margin removeMargin function to return traders margin
 def removeMargin(trader,withdrawAmount):
     tx = contractObj.functions.removeMargin(trader,trader,withdrawAmount).buildTransaction({
-        'from': SETTING["WALLET_ADDRESS"],
+        'from': SETTING["ADDRESS_ROBOT"],
         'gas': 1200000
     })
     tx_hash = trade_helper.sendTransation(tx)
@@ -30,7 +30,7 @@ def removeMargin(trader,withdrawAmount):
 # use margin openPosition function to open position
 def openPosition(trader,quoteAmount,side):
     tx = contractObj.functions.OpenPosition(trader,side,quoteAmount*(10**6)).buildTransaction({
-        'from': SETTING["WALLET_ADDRESS"],
+        'from': SETTING["ADDRESS_ROBOT"],
         'gas': 1200000
     })
     tx_hash = trade_helper.sendTransation(tx)
@@ -38,12 +38,12 @@ def openPosition(trader,quoteAmount,side):
     return tx_hash
 
 # use margin closePosition function to close position
-def closePosition(trader,quoteAmount):
-    tx = contractObj.functions.closePosition(trader,quoteAmount*(10**6)).buildTransaction({
-        'from': SETTING["WALLET_ADDRESS"],
+def closePosition(trader,trader_key,quoteAmount):
+    tx = contractObj.functions.closePosition(trader,quoteAmount).buildTransaction({
+        'from': SETTING["ADDRESS_ROBOT"],
         'gas': 1200000
     })
-    tx_hash = trade_helper.sendTransation(tx)
+    tx_hash = trade_helper.sendTransation(tx,trader=trader,trader_key=trader_key)
     w3.eth.waitForTransactionReceipt(tx_hash)
     return tx_hash
 
@@ -58,3 +58,22 @@ def getWithdrawable(trader):
     user_wthdrawAble = contractObj.functions.getWithdrawable(trader).call()
     print(user_wthdrawAble)
     return user_wthdrawAble
+
+def getFunding(trader):
+    funding_value = contractObj.functions.calFundingFee(trader).call()
+    print(funding_value)
+    return funding_value
+
+def getDebtRatio(trader):
+    debt_Ratio = contractObj.functions.calDebtRatio(trader).call()
+    print(debt_Ratio)
+    return debt_Ratio
+
+def toliquidate(trader,trader_key):
+    tx = contractObj.functions.liquidate(trader).buildTransaction({
+        'from': trader,
+        'gas': 1200000
+    })
+    tx_hash = trade_helper.sendTransation(tx,trader=trader,trader_key=trader_key)
+    w3.eth.waitForTransactionReceipt(tx_hash)
+    return tx_hash
