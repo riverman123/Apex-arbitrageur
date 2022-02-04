@@ -7,10 +7,11 @@ CONTRACT_INFO = config.AMM_CONTRACT_INFO
 w3 = Web3(Web3.HTTPProvider(SETTING["URL"]))
 contractObj = w3.eth.contract(address=CONTRACT_INFO["CONTRACT_ADDRESS"], abi=CONTRACT_INFO["CONTRACT_ABI"])
 
-def getReserves():
+def getReserves(is_print=False):
     reserves = contractObj.functions.getReserves().call()
-    print('x:',reserves[0]/(10**18))
-    print('y:',reserves[1]/(10**6))
+    if is_print == True:
+        print('x:',reserves[0]/(10**18))
+        print('y:',reserves[1]/(10**6))
     return reserves
 
 if __name__ == '__main__':

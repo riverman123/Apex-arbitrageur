@@ -50,7 +50,14 @@ def closePosition(trader,trader_key,quoteAmount):
 # use margin getPosition function to get position information
 def getPosition(trader):
     position_value = contractObj.functions.getPosition(trader).call()
+    position_value[0] = position_value[0]/(10**18)
+    position_value[1] = position_value[1]/(10**6)
+    position_value[2] = position_value[2]/(10**18)
     print(position_value)
+    return position_value
+
+def getPositionAccurate(trader):
+    position_value = contractObj.functions.getPosition(trader).call()
     return position_value
 
 # use margin getWithdrawable function to get position maximum withdraw margin value
@@ -61,7 +68,7 @@ def getWithdrawable(trader):
 
 def getFunding(trader):
     funding_value = contractObj.functions.calFundingFee(trader).call()
-    print(funding_value)
+    funding_value = funding_value/(10**18)
     return funding_value
 
 def getDebtRatio(trader):
