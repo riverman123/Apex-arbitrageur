@@ -3,6 +3,7 @@ import time,math
 from config import config
 from contract_helper import margin_test,priceOracle_test,router_test,amm_test,config_test
 from web3.main import Web3
+from trade_test import trade_fee
 
 SETTING = config.SETTING
 w3 = Web3(Web3.HTTPProvider(SETTING["URL"]))
@@ -76,7 +77,7 @@ def liquidate(trader,trader_key):
     print('debt_ratio:',debt_ratio)
     # if debt_ratio > 10000:
     print('>>>>>>begin liquidate')
-    margin_test.toliquidate(trader=trader,trader_key=trader_key)
+    return margin_test.toliquidate(trader=trader,trader_key=trader_key)
 
 def get_margin_acc(quoteAmount,vUSD,market_price):
     beta = config_test.getBeta()
@@ -103,6 +104,7 @@ def check_liquidate():
     for i in percent_list:
         print('>>>>>>>>>>>>>>>>>>>>>>>开仓量为总流动行性的%f'%i,'>>>>>>>>>>>>>>>>>>>>>>>>>>')
         # 检查Amm池子的状况
+        base_reserves_begin = amm_test.getReservesAccurate()[0]
         reserves = amm_test.getReserves(is_print=True)
         amm_x_first = reserves[0]
         amm_y_first = reserves[1]
@@ -127,13 +129,15 @@ def check_liquidate():
         target_price = get_liquidate_price(trader=SETTING["ADDRESS_USER"])
         # 将场内价格砸至用户a的清算价格
         price_increase(target_price=abs(target_price),market_price=abs(market_price),side=1)
-        # 将用户A的仓位平仓
-        liquidate(trader=SETTING["ADDRESS_USER"],trader_key=SETTING["PRIVATE_KEY_USER"])
+        # 将用户A的仓位清算
+        tx_hash = liquidate(trader=SETTING["ADDRESS_USER"],trader_key=SETTING["PRIVATE_KEY_USER"])
+        liquidate_fee = trade_fee.get_trade_fee(tx_id=tx_hash,is_liquidate=True)*0.001
         # 检查Amm池子的状况
-        amm_test.getReserves(is_print=True)
+        # amm_test.getReserves(is_print=True)
         # 将机器人的仓位平仓
         quoteAmount = margin_test.getPositionAccurate(trader=SETTING["ADDRESS_ROBOT"])[1]
-        margin_test.closePosition(trader=SETTING["ADDRESS_ROBOT"],trader_key=SETTING["PRIVATE_KEY_ROBOT"],quoteAmount=abs(quoteAmount))
+        tx_id = margin_test.closePosition(trader=SETTING["ADDRESS_ROBOT"],trader_key=SETTING["PRIVATE_KEY_ROBOT"],quoteAmount=abs(quoteAmount))
+        close_position_fee = trade_fee.get_trade_fee(tx_id=tx_id,is_liquidate=False)
         # 检查Amm池子的状况
         reserves_end = amm_test.getReserves(is_print=True)
         amm_x_end = reserves_end[0]
@@ -142,7 +146,8 @@ def check_liquidate():
         print("池子y的变化：",(amm_y_end-amm_y_first)/(10**6))
         return_margin(SETTING["ADDRESS_USER"],SETTING["PRIVATE_KEY_USER"])
         return_margin(SETTING["ADDRESS_ROBOT"],SETTING["PRIVATE_KEY_ROBOT"])
-
+        amm_test.setBaseReserve(28144364328489465569859)
+        amm_test.rebaseFree()
 
 
 

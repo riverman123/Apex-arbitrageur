@@ -14,7 +14,7 @@ TOKEN_INFO = {
 }
 
 MARGIN_CONTRACT_INFO = {
-    "CONTRACT_ADDRESS": "0x0f601A2A9091056ddBC28293B2940B75c87935D8",
+    "CONTRACT_ADDRESS": "0x0eD607e927a4C5f5CA304da171e6e6F3E8887920",
     "CONTRACT_ABI":"""[
 	{
 		"anonymous": false,
@@ -707,7 +707,7 @@ MARGIN_CONTRACT_INFO = {
 }
 
 ROUTER_CONTRACT_INFO = {
-    "CONTRACT_ADDRESS": "0x09eE5a984EB20E4A44829f827cb7C597Dbc4Caeb",
+    "CONTRACT_ADDRESS": "0x39d3a0F25D94D9c13E552b9E81eF9b03550A9783",
     "CONTRACT_ABI":"""[
 	{
 		"inputs": [],
@@ -1473,6 +1473,11 @@ PRICEORACLE_CONTRACT_INFO = {
 				"internalType": "uint256",
 				"name": "quoteAmount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "source",
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
@@ -1482,16 +1487,48 @@ PRICEORACLE_CONTRACT_INFO = {
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "baseToken",
+				"name": "amm",
 				"type": "address"
 			},
 			{
+				"internalType": "uint256",
+				"name": "baseAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "quoteFromAmmTwap",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "quoteAmount",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
-				"name": "quoteToken",
+				"name": "amm",
 				"type": "address"
 			}
 		],
 		"name": "setupTwap",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "pair",
+				"type": "address"
+			}
+		],
+		"name": "updateAmmTwap",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -1500,7 +1537,7 @@ PRICEORACLE_CONTRACT_INFO = {
 }
 
 AMM_CONTRACT_INFO = {
-    "CONTRACT_ADDRESS": "0xC1dF34a83a7616656725A0d611e4E357acf6f874",
+    "CONTRACT_ADDRESS": "0x357B185F7D472b0bC7b9a8dE3A26d3404b26acCa",
     "CONTRACT_ABI":"""[
 	{
 		"anonymous": false,
@@ -1542,6 +1579,12 @@ AMM_CONTRACT_INFO = {
 	{
 		"anonymous": false,
 		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "trader",
+				"type": "address"
+			},
 			{
 				"indexed": true,
 				"internalType": "address",
@@ -1629,6 +1672,12 @@ AMM_CONTRACT_INFO = {
 	{
 		"anonymous": false,
 		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "trader",
+				"type": "address"
+			},
 			{
 				"indexed": true,
 				"internalType": "address",
@@ -1795,6 +1844,11 @@ AMM_CONTRACT_INFO = {
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "trader",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
 				"name": "inputToken",
 				"type": "address"
 			},
@@ -1922,6 +1976,32 @@ AMM_CONTRACT_INFO = {
 	},
 	{
 		"inputs": [],
+		"name": "price0CumulativeLast",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "price1CumulativeLast",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "quoteToken",
 		"outputs": [
 			{
@@ -1947,7 +2027,38 @@ AMM_CONTRACT_INFO = {
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "rebaseFree",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "quoteReserveAfter",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_baseReserve",
+				"type": "uint256"
+			}
+		],
+		"name": "setBaseReserve",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "trader",
+				"type": "address"
+			},
 			{
 				"internalType": "address",
 				"name": "inputToken",
