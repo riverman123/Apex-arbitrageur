@@ -23,7 +23,7 @@ def openPositionRouter(side, marginAmount, quoteAmount,trader,trader_key,deadlin
     # 将取到的地址，变得可用
     baseToken=Web3.toChecksumAddress(baseToken)
     # buildTransaction
-    tx_dic = contractObj.functions.openPositionWithWallet(baseToken,quoteToken,side,marginAmount*(10**18),quoteAmount*(10**6),base_limit,deadline).buildTransaction({
+    tx_dic = contractObj.functions.openPositionWithWallet(baseToken,quoteToken,side,int(marginAmount*(10**18)),int(quoteAmount*(10**6)),base_limit,deadline).buildTransaction({
         'from': trader,
         'gas': 1200000
     })

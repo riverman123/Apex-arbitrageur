@@ -14,6 +14,11 @@ def getReserves(is_print=False):
         print('y:',reserves[1]/(10**6))
     return reserves
 
+def getReservesAccurate():
+    reserves = contractObj.functions.getReserves().call()
+    return reserves
+
+
 if __name__ == '__main__':
     getReserves()
 
