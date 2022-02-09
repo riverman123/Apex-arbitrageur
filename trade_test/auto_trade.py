@@ -100,7 +100,8 @@ def get_liquidate_price(trader):
 
 # check amm
 def check_liquidate():
-    percent_list = [0.01,0.05,0.1,0.15,0.2]
+    percent_list = [0.01,0.02,0.04,0.06,0.08,0.1,0.12,0.14]
+    # percent_list = [0.01]
     for i in percent_list:
         print('>>>>>>>>>>>>>>>>>>>>>>>开仓量为总流动行性的%f'%i,'>>>>>>>>>>>>>>>>>>>>>>>>>>')
         # 检查Amm池子的状况
@@ -146,7 +147,7 @@ def check_liquidate():
         print("池子y的变化：",(amm_y_end-amm_y_first)/(10**6))
         return_margin(SETTING["ADDRESS_USER"],SETTING["PRIVATE_KEY_USER"])
         return_margin(SETTING["ADDRESS_ROBOT"],SETTING["PRIVATE_KEY_ROBOT"])
-        amm_test.setBaseReserve(28144364328489465569859)
+        amm_test.setBaseReserve(base_reserves_begin)
         amm_test.rebaseFree()
 
 

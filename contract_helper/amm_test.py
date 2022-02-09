@@ -29,7 +29,7 @@ def setBaseReserve(base_reserve):
     return tx_hash
 
 def rebaseFree():
-    tx_dic = contractObj.functions.setBaseReserve().buildTransaction({
+    tx_dic = contractObj.functions.rebaseFree().buildTransaction({
         'from': SETTING["ADDRESS_USER"],
         'gas': 1200000
     })
@@ -38,5 +38,5 @@ def rebaseFree():
     return tx_hash
 
 if __name__ == '__main__':
-    setBaseReserve(28144364328489465569859)
+    setBaseReserve(28143364328489465569859)
 
