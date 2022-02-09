@@ -1,17 +1,20 @@
 SETTING = {
     "URL": "https://rinkeby.arbitrum.io/rpc",
-    "WALLET_PRIVATE_KEY": "0xf072d6e5deacdc39f916f38123beddf63cd2934bb7863a5c2e62949d1bac5bee", # WALLET_PRIVATE_KEY 加0x
-    "WALLET_ADDRESS": "0x4c3C90d25c93d08853b61c81cFd95d58c3B0C073"
+    "PRIVATE_KEY_ROBOT":"0xf072d6e5deacdc39f916f38123beddf63cd2934bb7863a5c2e62949d1bac5bee", # WALLET_PRIVATE_KEY 加0x
+    "ADDRESS_ROBOT":"0x4c3C90d25c93d08853b61c81cFd95d58c3B0C073",
+    "PRIVATE_KEY_USER":"0x5921059e276bae2e61d8e5ade6d6a026cce953344d3b9f0df218ef9ecd90ac58",
+    "ADDRESS_USER":"0x6014F6D866F3EeC7463c7D74639185265a98C91D",
 }
 
 TOKEN_INFO = {
     "mockWETH": "0x655e2b2244934Aea3457E3C56a7438C271778D44",
     "mockWBTC": "0x3F12C33BDe6dE5B66F88D7a5d3CE8dE3C98b5FA7",
-    "mockUSDC": "0x79dCF515aA18399CF8fAda58720FAfBB1043c526"
+    "mockUSDC": "0x79dCF515aA18399CF8fAda58720FAfBB1043c526",
+    "BBB":"0x8d5de6ac3732b8fbfc6d4843ac182eb725f3f741"
 }
 
 MARGIN_CONTRACT_INFO = {
-    "CONTRACT_ADDRESS": "0x3071A809B1f5918F599A48D4975a0DfD4316150F",
+    "CONTRACT_ADDRESS": "0x0eD607e927a4C5f5CA304da171e6e6F3E8887920",
     "CONTRACT_ABI":"""[
 	{
 		"anonymous": false,
@@ -704,7 +707,7 @@ MARGIN_CONTRACT_INFO = {
 }
 
 ROUTER_CONTRACT_INFO = {
-    "CONTRACT_ADDRESS": "0x09eE5a984EB20E4A44829f827cb7C597Dbc4Caeb",
+    "CONTRACT_ADDRESS": "0x39d3a0F25D94D9c13E552b9E81eF9b03550A9783",
     "CONTRACT_ABI":"""[
 	{
 		"inputs": [],
@@ -1470,6 +1473,11 @@ PRICEORACLE_CONTRACT_INFO = {
 				"internalType": "uint256",
 				"name": "quoteAmount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "source",
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
@@ -1479,16 +1487,48 @@ PRICEORACLE_CONTRACT_INFO = {
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "baseToken",
+				"name": "amm",
 				"type": "address"
 			},
 			{
+				"internalType": "uint256",
+				"name": "baseAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "quoteFromAmmTwap",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "quoteAmount",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
-				"name": "quoteToken",
+				"name": "amm",
 				"type": "address"
 			}
 		],
 		"name": "setupTwap",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "pair",
+				"type": "address"
+			}
+		],
+		"name": "updateAmmTwap",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -1497,7 +1537,7 @@ PRICEORACLE_CONTRACT_INFO = {
 }
 
 AMM_CONTRACT_INFO = {
-    "CONTRACT_ADDRESS": "0xf600e88e55db6524AC8304901dc550610Fa3849E",
+    "CONTRACT_ADDRESS": "0x357B185F7D472b0bC7b9a8dE3A26d3404b26acCa",
     "CONTRACT_ABI":"""[
 	{
 		"anonymous": false,
@@ -1539,6 +1579,12 @@ AMM_CONTRACT_INFO = {
 	{
 		"anonymous": false,
 		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "trader",
+				"type": "address"
+			},
 			{
 				"indexed": true,
 				"internalType": "address",
@@ -1626,6 +1672,12 @@ AMM_CONTRACT_INFO = {
 	{
 		"anonymous": false,
 		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "trader",
+				"type": "address"
+			},
 			{
 				"indexed": true,
 				"internalType": "address",
@@ -1792,6 +1844,11 @@ AMM_CONTRACT_INFO = {
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "trader",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
 				"name": "inputToken",
 				"type": "address"
 			},
@@ -1919,6 +1976,32 @@ AMM_CONTRACT_INFO = {
 	},
 	{
 		"inputs": [],
+		"name": "price0CumulativeLast",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "price1CumulativeLast",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "quoteToken",
 		"outputs": [
 			{
@@ -1944,7 +2027,38 @@ AMM_CONTRACT_INFO = {
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "rebaseFree",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "quoteReserveAfter",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_baseReserve",
+				"type": "uint256"
+			}
+		],
+		"name": "setBaseReserve",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "trader",
+				"type": "address"
+			},
 			{
 				"internalType": "address",
 				"name": "inputToken",
@@ -1974,6 +2088,488 @@ AMM_CONTRACT_INFO = {
 				"type": "uint256[2]"
 			}
 		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]"""
+}
+
+CONFIG_INFO = {
+    "CONTRACT_ADDRESS": "0xD661056569866dA894E4c2c9d5B3752C64552e7e",
+    "CONTRACT_ABI":"""[
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "oldOracle",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOracle",
+				"type": "address"
+			}
+		],
+		"name": "PriceOracleChanged",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "oldGap",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "newGap",
+				"type": "uint256"
+			}
+		],
+		"name": "RebasePriceGapChanged",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "router",
+				"type": "address"
+			}
+		],
+		"name": "RouterRegistered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "router",
+				"type": "address"
+			}
+		],
+		"name": "RouterUnregistered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "oldBeta",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "beta",
+				"type": "uint256"
+			}
+		],
+		"name": "SetBeta",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "oldFeeParameter",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "feeParameter",
+				"type": "uint256"
+			}
+		],
+		"name": "SetFeeParameter",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "oldInitMarginRatio",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "initMarginRatio",
+				"type": "uint256"
+			}
+		],
+		"name": "SetInitMarginRatio",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "oldLiquidateFeeRatio",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "liquidateFeeRatio",
+				"type": "uint256"
+			}
+		],
+		"name": "SetLiquidateFeeRatio",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "oldLiquidateThreshold",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "liquidateThreshold",
+				"type": "uint256"
+			}
+		],
+		"name": "SetLiquidateThreshold",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "oldMaxCPFBoost",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "maxCPFBoost",
+				"type": "uint256"
+			}
+		],
+		"name": "SetMaxCPFBoost",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "oldTradingSlippage",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "newTradingSlippage",
+				"type": "uint256"
+			}
+		],
+		"name": "TradingSlippageChanged",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "beta",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "feeParameter",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "initMarginRatio",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "liquidateFeeRatio",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "liquidateThreshold",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "maxCPFBoost",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "priceOracle",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "rebasePriceGap",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "router",
+				"type": "address"
+			}
+		],
+		"name": "registerRouter",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "routerMap",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint8",
+				"name": "newBeta",
+				"type": "uint8"
+			}
+		],
+		"name": "setBeta",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "newFeeParameter",
+				"type": "uint256"
+			}
+		],
+		"name": "setFeeParameter",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "marginRatio",
+				"type": "uint256"
+			}
+		],
+		"name": "setInitMarginRatio",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "feeRatio",
+				"type": "uint256"
+			}
+		],
+		"name": "setLiquidateFeeRatio",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "threshold",
+				"type": "uint256"
+			}
+		],
+		"name": "setLiquidateThreshold",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "newMaxCPFBoost",
+				"type": "uint256"
+			}
+		],
+		"name": "setMaxCPFBoost",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOracle",
+				"type": "address"
+			}
+		],
+		"name": "setPriceOracle",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "newGap",
+				"type": "uint256"
+			}
+		],
+		"name": "setRebasePriceGap",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "newTradingSlippage",
+				"type": "uint256"
+			}
+		],
+		"name": "setTradingSlippage",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "tradingSlippage",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "router",
+				"type": "address"
+			}
+		],
+		"name": "unregisterRouter",
+		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	}
