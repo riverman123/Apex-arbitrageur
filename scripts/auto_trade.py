@@ -36,8 +36,8 @@ def auto_trade_slow(side,margin_mount=1,quote_size=10000):
     for i in range(abs(int(quote_amount / (10000 * (10 ** 6))))):
         margin.closePosition(trader=SETTING["ADDRESS_ROBOT"], quoteAmount=quote_size)
         margin.getPosition(SETTING["ADDRESS_ROBOT"])
-        mark_price = priceOracle_test.getMarkPrice(address=address)
-        index_price = priceOracle_test.getIndexPrice(address=address)
+        mark_price = priceOracle.getMarkPrice(address=address)
+        index_price = priceOracle.getIndexPrice(address=address)
         # The market price fluctuates more than 10% , break
         if ((mark_price - index_price) / index_price) <= -0.1:
             break
