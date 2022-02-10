@@ -1,0 +1,12 @@
+__pycache__
+.gitattributes
+.prettierrc
+.history
+.hypothesis/
+build/
+reports/
+flatten/
+node_modules
+package-lock.json
+venv/
+.idea/
