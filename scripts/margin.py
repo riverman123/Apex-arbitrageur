@@ -90,6 +90,7 @@ def main():
     print(getDebtRatio(SETTING["ADDRESS_USER"]))
     position = getPosition(SETTING["ADDRESS_USER"])
     print(position)
-   # closePosition(SETTING["ADDRESS_USER"], abs(position[1]))
+    tx=  closePosition(SETTING["ADDRESS_USER"], abs(position[1]))
+    print(tx)
     
     

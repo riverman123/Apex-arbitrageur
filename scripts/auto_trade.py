@@ -138,14 +138,15 @@ def check_liquidate():
         # 将场内价格砸至用户a的清算价格
         price_increase(target_price=abs(target_price),market_price=abs(market_price),side=1)
         # 将用户A的仓位清算
-        tx_hash = liquidate(trader=SETTING["ADDRESS_USER"])
-        liquidate_fee = trade_fee.get_trade_fee(tx_id=tx_hash,is_liquidate=True)*0.001
+        tx = liquidate(trader=SETTING["ADDRESS_USER"])
+        #todo calculate the fee
+        #liquidate_fee = trade_fee.get_trade_fee(tx_id=tx,is_liquidate=True)*0.001
         # 检查Amm池子的状况
         # amm.getReserves(is_print=True)
         # 将机器人的仓位平仓
         quoteAmount = margin.getPositionAccurate(trader=SETTING["ADDRESS_ROBOT"])[1]
-        tx_id = margin.closePosition(trader=SETTING["ADDRESS_ROBOT"],quoteAmount=abs(quoteAmount))
-        close_position_fee = trade_fee.get_trade_fee(tx_id=tx_id,is_liquidate=False)
+        tx = margin.closePosition(trader=SETTING["ADDRESS_ROBOT"],quoteAmount=abs(quoteAmount))
+        #close_position_fee = trade_fee.get_trade_fee(tx_id=tx,is_liquidate=False)
         # 检查Amm池子的状况
         reserves_end = amm.getReserves(is_print=True)
         amm_x_end = reserves_end[0]
