@@ -1,4 +1,5 @@
 from brownie import  *
+from brownie.convert import to_address
 from config import config
 import sys
 
@@ -18,7 +19,7 @@ def openPositionRouter(side, marginAmount, quoteAmount,trader,deadline=195751589
     else:
         base_limit = sys.maxsize*sys.maxsize
     # 将取到的地址，变得可用
-    baseToken=Web3.toChecksumAddress(baseToken)
+    baseToken=to_address(baseToken)
     # buildTransaction
     tx = IRouter.openPositionWithWallet(baseToken,quoteToken,side,int(marginAmount*(10**18)),int(quoteAmount*(10**6)),base_limit,deadline, {
         'from': trader,

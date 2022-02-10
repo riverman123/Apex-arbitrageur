@@ -4,7 +4,7 @@ from config import config
 
 SETTING = config.SETTING
 CONTRACT_INFO = config.CONFIG_INFO
-Iconfig = interface.IAmm(CONTRACT_INFO["CONTRACT_ADDRESS"])
+Iconfig = interface.IConfig(CONTRACT_INFO["CONTRACT_ADDRESS"])
 
 
 

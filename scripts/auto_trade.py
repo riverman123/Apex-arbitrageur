@@ -1,7 +1,8 @@
 from brownie import  *
+from web3.main import Web3
 import os
 import time,math
-from scripts import amm, router, priceOracle,margin 
+from scripts import amm, router, priceOracle,margin , config_contract
 from config import config
 # from contract_helper import margin_test,priceOracle_test,router_test,amm,config_test
 from trade_test import trade_fee
@@ -42,12 +43,12 @@ def auto_trade_slow(side,margin_mount=1,quote_size=10000):
             break
     return_margin(SETTING["ADDRESS_ROBOT"])
 
-def return_margin(trader,trader_key):
+def return_margin(trader):
     user_wthdrawAble = margin.getWithdrawable(trader)
-    margin.removeMargin(trader=trader,trader_key=trader_key,withdrawAmount=user_wthdrawAble)
+    margin.removeMargin(trader=trader,withdrawAmount=user_wthdrawAble)
 
 def get_max_position(margin_amount,margin_rate):
-    beta = configContract.getBeta()
+    beta = config_contract.getBeta()
     reserves = amm.getReserves(is_print=False)
     amm_y_first = reserves[1]
     print(amm_y_first)
@@ -64,11 +65,11 @@ def price_increase(target_price,market_price,side):
     amm_y = reserves[1]
     amm_l = (amm_x/(10**18))*(amm_y/(10**6))
     quote_amount = math.sqrt(amm_l)*(math.sqrt(target_price)-math.sqrt(market_price))
-    router.openPositionRouter(side=side, marginAmount=20000, quoteAmount=int(abs(quote_amount)) + 1,trader=SETTING["ADDRESS_ROBOT"],trader_key=SETTING["PRIVATE_KEY_ROBOT"])
+    router.openPositionRouter(side=side, marginAmount=20000, quoteAmount=int(abs(quote_amount)) + 1,trader=SETTING["ADDRESS_ROBOT"])
     
     position_info = margin.getPosition(trader=SETTING["ADDRESS_ROBOT"])
     print("机器人仓位：",position_info)
-    return tx_hash_openPosition.hex()
+    return position_info
 
 def get_amml():
     reserves = amm.getReservesAccurate()
@@ -78,22 +79,22 @@ def get_amml():
     return abs(amm_l)
 
 # 清算用户仓位
-def liquidate(trader,trader_key):
+def liquidate(trader):
     debt_ratio = margin.getDebtRatio(trader)
     print('debt_ratio:',debt_ratio)
     # if debt_ratio > 10000:
     print('>>>>>>begin liquidate')
-    return margin.toliquidate(trader=trader,trader_key=trader_key)
+    return margin.toliquidate(trader=trader)
 
 def get_margin_acc(quoteAmount,vUSD,market_price):
-    beta = configContract.getBeta()
+    beta = config_contract.getBeta()
     v_1 = 2.0*beta/vUSD
     v_2 = 1/((1/quoteAmount-v_1)*market_price*10)
     return abs(v_2)
 
 # 计算仓位的清算价格
 def get_liquidate_price(trader):
-    beta = configContract.getBeta()
+    beta = config_contract.getBeta()
     position_info = margin.getPositionAccurate(trader)
     amm_l = get_amml()
     v_1 = (position_info[1]**2)/(4*amm_l)/(10**12)
@@ -124,7 +125,7 @@ def check_liquidate():
         quoteAmount = int(abs(math.sqrt(amm_l)*i))
         marginAmount = round(get_margin_acc(quoteAmount,amm_y_first/(10**6),market_price),2)
         print("margin:",marginAmount,"    quote_size:",quoteAmount)
-        router_test.openPositionRouter(side=0, marginAmount=marginAmount, quoteAmount=quoteAmount,trader=SETTING["ADDRESS_USER"],trader_key=SETTING["PRIVATE_KEY_USER"])
+        router.openPositionRouter(side=0, marginAmount=marginAmount, quoteAmount=quoteAmount,trader=SETTING["ADDRESS_USER"])
         print("用户A仓位:",margin.getPosition(SETTING["ADDRESS_USER"]))
         time.sleep(5)
         # 检查Amm池子的状况
@@ -137,13 +138,13 @@ def check_liquidate():
         # 将场内价格砸至用户a的清算价格
         price_increase(target_price=abs(target_price),market_price=abs(market_price),side=1)
         # 将用户A的仓位清算
-        tx_hash = liquidate(trader=SETTING["ADDRESS_USER"],trader_key=SETTING["PRIVATE_KEY_USER"])
+        tx_hash = liquidate(trader=SETTING["ADDRESS_USER"])
         liquidate_fee = trade_fee.get_trade_fee(tx_id=tx_hash,is_liquidate=True)*0.001
         # 检查Amm池子的状况
         # amm.getReserves(is_print=True)
         # 将机器人的仓位平仓
         quoteAmount = margin.getPositionAccurate(trader=SETTING["ADDRESS_ROBOT"])[1]
-        tx_id = margin.closePosition(trader=SETTING["ADDRESS_ROBOT"],trader_key=SETTING["PRIVATE_KEY_ROBOT"],quoteAmount=abs(quoteAmount))
+        tx_id = margin.closePosition(trader=SETTING["ADDRESS_ROBOT"],quoteAmount=abs(quoteAmount))
         close_position_fee = trade_fee.get_trade_fee(tx_id=tx_id,is_liquidate=False)
         # 检查Amm池子的状况
         reserves_end = amm.getReserves(is_print=True)
@@ -160,7 +161,7 @@ def check_liquidate():
 
 
 def main():
-    #check_liquidate()
-    print(get_amml())
+    check_liquidate()
+    #print(get_amml())
 
     # get_liquidate_price(trader=SETTING["ADDRESS_USER"], beta=1)

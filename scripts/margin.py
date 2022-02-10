@@ -1,57 +1,57 @@
 from brownie import  *
 from config import config
 from helper import trade_helper
+import os
 
 SETTING = config.SETTING
 CONTRACT_INFO = config.MARGIN_CONTRACT_INFO
 IMargin = interface.IMargin(CONTRACT_INFO["CONTRACT_ADDRESS"])
+PRIVATE_KEY_USER = os.getenv("PRIVATE_KEY_USER")
+PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
+userA = accounts.add(private_key= PRIVATE_KEY_USER)
+userRobert = accounts.add(private_key= PRIVATE_KEY_ROBOT )
 
 # add margin to margin contract
 def addMargin(trader,trader_key, quoteAmount):
-    tx_dic = IMargin.addMargin(trader,quoteAmount*(10**6),{
+    tx = IMargin.addMargin(trader,quoteAmount*(10**6),{
         'from': trader,
         'gas': 1200000
     })
-    tx_hash = trade_helper.sendTransation(tx_dic=tx_dic,trader=trader,trader_key=trader_key)
-    w3.eth.waitForTransactionReceipt(tx_hash)
-    return tx_hash
+
+    return tx
 
 # use margin removeMargin function to return traders margin
 def removeMargin(trader,trader_key,withdrawAmount):
-    tx_dic = IMargin.removeMargin(trader,trader,withdrawAmount,{
+    tx = IMargin.removeMargin(trader,trader,withdrawAmount,{
         'from': trader,
         'gas': 1200000
     })
-    tx_hash = trade_helper.sendTransation(tx_dic=tx_dic,trader=trader,trader_key=trader_key)
-    w3.eth.waitForTransactionReceipt(tx_hash)
-    return tx_hash
+
+    return tx
 
 # use margin openPosition function to open position
 def openPosition(trader,quoteAmount,side):
     tx = IMargin.OpenPosition(trader,side,quoteAmount*(10**6),{
-        'from': SETTING["ADDRESS_ROBOT"],
+        'from': trader,
         'gas': 1200000
     })
-    tx_hash = trade_helper.sendTransation(tx)
-    w3.eth.waitForTransactionReceipt(tx_hash)
-    return tx_hash
+    return tx
 
 # use margin closePosition function to close position
-def closePosition(trader,trader_key,quoteAmount):
+# todo robot 
+def closePosition(trader,quoteAmount):
     tx = IMargin.closePosition(trader,quoteAmount,{
-        'from': SETTING["ADDRESS_ROBOT"],
+        'from': trader,
         'gas': 1200000
     })
-    tx_hash = trade_helper.sendTransation(tx,trader=trader,trader_key=trader_key)
-    w3.eth.waitForTransactionReceipt(tx_hash)
-    return tx_hash
+    return tx
 
 # use margin getPosition function to get position information
 def getPosition(trader):
     position_value = IMargin.getPosition(trader)
-    position_value[0] = position_value[0]/(10**18)
-    position_value[1] = position_value[1]/(10**6)
-    position_value[2] = position_value[2]/(10**18)
+    position0 = position_value[0]/(10**18)
+    position1 = position_value[1]/(10**6)
+    position2 = position_value[2]/(10**18)
     return position_value
 
 def getPositionAccurate(trader):
@@ -78,7 +78,7 @@ def getDebtRatio(trader):
     print(debt_Ratio)
     return debt_Ratio
 
-def toliquidate(trader,trader_key):
+def toliquidate(trader):
     tx = IMargin.liquidate(trader,{
         'from': trader,
         'gas': 1200000
@@ -87,7 +87,9 @@ def toliquidate(trader,trader_key):
 
 
 def main():
-    t = chain.get_transaction('0xc8d5fee409163ea4cac15cff17a629576f87b10adb40e0c2ae70ef8504fe47a7')
-    print(t.events)
-    print(getDebtRatio("0x4c3C90d25c93d08853b61c81cFd95d58c3B0C073"))
+    print(getDebtRatio(SETTING["ADDRESS_USER"]))
+    position = getPosition(SETTING["ADDRESS_USER"])
+    print(position)
+    closePosition(SETTING["ADDRESS_USER"], abs(position[1]))
+    
     
