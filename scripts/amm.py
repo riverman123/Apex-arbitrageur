@@ -1,17 +1,46 @@
 from brownie import  *
+import os
+from config import config
 
 from dotenv import load_dotenv
 load_dotenv()
-# my_address = os.getenv("ACCOUNT_ADDRESS")
-# private_key = os.getenv("PRIVATE_KEY")
+
+PRIVATE_KEY_USER = os.getenv("PRIVATE_KEY_USER")
+PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
+userA = accounts.add(private_key= PRIVATE_KEY_USER)
+userRobert = accounts.add(private_key= PRIVATE_KEY_ROBOT )
+
+CONTRACT_INFO = config.AMM_CONTRACT_INFO
+IAmm = interface.IAmm(CONTRACT_INFO["CONTRACT_ADDRESS"])
+
+
+def getReserves(is_print=False):
+    reserves = IAmm.getReserves()
+    if is_print == True:
+        print('x:',reserves[0]/(10**18))
+        print('y:',reserves[1]/(10**6))
+    return reserves
+
+def getReservesAccurate():
+    reserves = IAmm.getReserves()
+    return reserves
+
+def setBaseReserve(base_reserve):
+    print("base_reserve:",base_reserve)
+    tx = IAmm.setBaseReserve(base_reserve , {'from': userA})
+    return tx
+
+def rebaseFree():
+    tx = IAmm.rebaseFree({'from': userA})
+    return tx
 
 def main():
-  
-    IAmm = interface.IAmm("0x357B185F7D472b0bC7b9a8dE3A26d3404b26acCa")
-
-    reserve =  IAmm.getReserves()
-    print(reserve)
-    userA = accounts.add(private_key="0x5921059e276bae2e61d8e5ade6d6a026cce953344d3b9f0df218ef9ecd90ac58")
-    IAmm.rebaseFree({"from": userA})
-    reserve =  IAmm.getReserves()
-    print(reserve)
+    t = chain.get_transaction('0xc8d5fee409163ea4cac15cff17a629576f87b10adb40e0c2ae70ef8504fe47a7')
+    print(t.events)
+    # reserve =  IAmm.getReserves()
+    # print(reserve)
+    # tx =  IAmm.rebaseFree({"from": userA})
+    # print(tx.events)
+    # print(rebaseFree())
+    # reserve =  IAmm.getReserves()
+    # print(reserve)
