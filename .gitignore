@@ -11,3 +11,4 @@ package-lock.json
 venv/
 .idea/
 .env
+1.json
