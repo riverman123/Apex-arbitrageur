@@ -3,8 +3,9 @@ import os
 from config import config
 
 SETTING = config.SETTING
-#todo 
+# todo
 def get_trade_fee(tx,is_liquidate=True):
+
     # 清算方法平仓
     if is_liquidate:
         
@@ -28,7 +29,7 @@ def get_trade_fee(tx,is_liquidate=True):
         #         quote_size = Web3.toInt(bytes.fromhex(data[2:66]))
         #         base_size = Web3.toInt(bytes.fromhex(data[66:]))
         #         break
-    return base_size
+    return events
 
 
     # print("returnData",Web3.toText(result))

@@ -4,8 +4,7 @@ import os
 import time, math
 from scripts import amm, router, priceOracle, margin, config_contract
 from config import config
-from trade_test import trade_fee
-
+from scripts import trade_fee
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -127,7 +126,7 @@ def check_liquidate(side):
         # 将场内价格砸至用户a的清算价格
         price_increase(target_price=abs(target_price), market_price=abs(market_price), side=side)
         # 将用户A的仓位清算
-        tx = liquidate(trader=SETTING["ADDRESS_USER"])
+        liquidate_tx = liquidate(trader=SETTING["ADDRESS_USER"])
         # todo calculate the fee
         # liquidate_fee = trade_fee.get_trade_fee(tx_id=tx,is_liquidate=True)*0.001
         # 检查Amm池子的状况
@@ -145,10 +144,6 @@ def check_liquidate(side):
         margin.return_margin(SETTING["ADDRESS_ROBOT"])
         amm.setBaseReserve(base_reserves_begin)
         amm.rebaseFree()
-
-
+        print("events:",trade_fee.get_trade_fee(tx=liquidate_tx))
 def main():
     check_liquidate(0)
-    # print(get_amml())
-
-    # get_liquidate_price(trader=SETTING["ADDRESS_USER"], beta=1)
