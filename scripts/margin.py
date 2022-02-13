@@ -21,7 +21,7 @@ def addMargin(trader,trader_key, quoteAmount):
     return tx
 
 # use margin removeMargin function to return traders margin
-def removeMargin(trader,trader_key,withdrawAmount):
+def removeMargin(trader,withdrawAmount):
     tx = IMargin.removeMargin(trader,trader,withdrawAmount,{
         'from': trader,
         'gas': 1200000
@@ -85,6 +85,10 @@ def toliquidate(trader):
     })
     return tx
 
+def return_margin(trader):
+    user_wthdrawAble = getWithdrawable(trader)
+    print()
+    removeMargin(trader=trader,withdrawAmount=user_wthdrawAble)
 
 def main():
     print(getDebtRatio(SETTING["ADDRESS_USER"]))
