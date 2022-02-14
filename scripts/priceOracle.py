@@ -3,17 +3,18 @@ from config import config
 
 SETTING = config.SETTING
 CONTRACT_INFO = config.PRICEORACLE_CONTRACT_INFO
+amm_address = config.AMM_CONTRACT_INFO["CONTRACT_ADDRESS"]
 IPriceOracle = interface.IPriceOracle(CONTRACT_INFO["CONTRACT_ADDRESS"])
 
 
 
-def getIndexPrice(address):
+def getIndexPrice(address=amm_address):
     indexPrice = IPriceOracle.getIndexPrice(address)
     return indexPrice
 
-def getMarkPrice(address):
+def getMarkPrice(address=amm_address):
     markPrice = IPriceOracle.getMarkPrice(address)
-    return markPrice
+    return markPrice/(10**18)
 
 
 def main():

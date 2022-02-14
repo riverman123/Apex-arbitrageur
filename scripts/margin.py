@@ -85,6 +85,10 @@ def toliquidate(trader):
     })
     return tx
 
+def return_margin(trader):
+    user_wthdrawAble = getWithdrawable(trader)
+    print()
+    removeMargin(trader=trader,withdrawAmount=user_wthdrawAble)
 
 def main():
     trader = SETTING["ADDRESS_USER"]
