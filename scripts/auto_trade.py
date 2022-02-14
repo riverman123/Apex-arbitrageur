@@ -63,31 +63,6 @@ def calculate_liquidate_price(target_price, market_price, side):
         print("当前的MarkPrice:", priceOracle.getMarkPrice())
     return robot_open_tx
 
-def calculate_liquidate_price(target_price,market_price,side):
-    reserves = amm.getReserves()
-    amm_x = reserves[0]
-    amm_y = reserves[1]
-    amm_l = (amm_x / (10 ** 18)) * (amm_y / (10 ** 6))
-    if side == 0:
-        quote_amount = math.sqrt(amm_l) * (math.sqrt(target_price) - math.sqrt(market_price))
-        robot_open_tx = router.openPositionRouter(side=1, marginAmount=20000,
-                                                         quoteAmount=int(abs(quote_amount)) + 1,
-                                                         trader=SETTING["ADDRESS_ROBOT"],
-                                                         )
-        position_info = margin.getPosition(trader=SETTING["ADDRESS_ROBOT"])
-        print("机器人仓位：", position_info)
-        print("当前的MarkPrice:",priceOracle.getMarkPrice())
-    else:
-        quote_amount = math.sqrt(amm_l) * (math.sqrt(market_price) - math.sqrt(target_price))
-        robot_open_tx = router.openPositionRouter(side=0, marginAmount=20000,
-                                                         quoteAmount=int(abs(quote_amount)) + 1,
-                                                         trader=SETTING["ADDRESS_ROBOT"],
-                                                         )
-        position_info = margin.getPosition(trader=SETTING["ADDRESS_ROBOT"])
-        print("机器人仓位：", position_info)
-        print("当前的MarkPrice:",priceOracle.getMarkPrice())
-    return robot_open_tx
-
 def get_amml():
     reserves = amm.getReservesAccurate()
     amm_x = reserves[0]
