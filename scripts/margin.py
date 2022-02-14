@@ -12,7 +12,7 @@ userA = accounts.add(private_key= PRIVATE_KEY_USER)
 userRobert = accounts.add(private_key= PRIVATE_KEY_ROBOT )
 
 # add margin to margin contract
-def addMargin(trader,trader_key, quoteAmount):
+def addMargin(trader, quoteAmount):
     tx = IMargin.addMargin(trader,quoteAmount*(10**6),{
         'from': trader,
         'gas': 1200000
@@ -91,10 +91,12 @@ def return_margin(trader):
     removeMargin(trader=trader,withdrawAmount=user_wthdrawAble)
 
 def main():
-    print(getDebtRatio(SETTING["ADDRESS_USER"]))
+    trader = SETTING["ADDRESS_USER"]
     position = getPosition(SETTING["ADDRESS_USER"])
     print(position)
     tx=  closePosition(SETTING["ADDRESS_USER"], abs(position[1]))
     print(tx)
+    amount = getWithdrawable(SETTING["ADDRESS_USER"]) * 0.8
+    removeMargin(trader,amount)
     
     
