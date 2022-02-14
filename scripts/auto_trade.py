@@ -138,10 +138,6 @@ def check_liquidate(side):
         # 将用户A的仓位清算
         liquidate_tx = liquidate(trader=SETTING["ADDRESS_USER"])
         trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=liquidate_tx,is_liquidate=True)
-        # 将用户A的仓位清算
-        tx = liquidate(trader=SETTING["ADDRESS_USER"])
-        print("liquidata tx :", tx)
-        liquidate_fee = trade_fee.get_trade_fee(tx=tx,is_liquidate=True)
         # 检查Amm池子的状况
         amm.getReserves(is_print=True)
         # 将机器人的仓位平仓
