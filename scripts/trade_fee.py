@@ -36,11 +36,12 @@ def get_trade_fee(tx, is_liquidate=True):
         # open/close position
         swapEvents = tx.events['(unknown)']
         inputToken = swapEvents['topic2']
+        print('input token', inputToken)
         data = swapEvents['data']
         inputAmount = to_uint(Web3.toHex(data[0:32]), type_str="uint256")
         outputAmount = to_uint(Web3.toHex(data[33:65]), type_str="uint256")
         # BBB
-        if inputToken == '0x952f0204f0cd4a565603e9e3991f63420e38eef38bef5fd8e0ffd26abf363d83':
+        if inputToken == '0x00000000000000000000000079dcf515aa18399cf8fada58720fafbb1043c526':
             fee = inputAmount * 0.001
         # usdc
         else:
@@ -61,12 +62,12 @@ def main():
     print("-----------")
     # BBB
     # t = chain.get_transaction('0x952f0204f0cd4a565603e9e3991f63420e38eef38bef5fd8e0ffd26abf363d83')
-    t = chain.get_transaction('0x1b5197ce40b99233aa1e350544db75147b80d8a4f0f11171e06ed604e3accdcf')
+    t = chain.get_transaction('0xd59f732191932fff0fa25cd826315e850bd7bf8cc23196df1871bf7e798a5a28')
     print(t.events)
-    liquidateEvent = t.events["Liquidate"]
 
-    fee = get_trade_fee(t, True)
+    fee = get_trade_fee(t, False)
     print(fee)
+   
     # syncEvent = t.events['Sync']
     # reserveBase = syncEvent['reserveBase']
     # reserveQuote =syncEvent['reserveQuote']
