@@ -12,3 +12,4 @@ venv/
 .idea/
 .env
 1.json
+venv/*
