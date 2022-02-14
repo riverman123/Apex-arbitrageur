@@ -38,7 +38,7 @@ def get_max_position(margin_amount, margin_rate):
 
 
 # 使用机器人砸低市价
-def price_increase(target_price, market_price, side):
+def calculate_liquidate_price(target_price, market_price, side):
     reserves = amm.getReserves()
     amm_x = reserves[0]
     amm_y = reserves[1]
@@ -158,7 +158,7 @@ def check_liquidate(side):
         # 计算用户A的清算价格
         target_price = get_liquidate_price(trader=SETTING["ADDRESS_USER"])
         # 将场内价格砸至用户a的清算价格
-        robot_open_tx = price_increase(target_price=abs(target_price), market_price=abs(market_price), side=side)
+        robot_open_tx = calculate_liquidate_price(target_price=abs(target_price), market_price=abs(market_price), side=side)
         trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=robot_open_tx,is_liquidate=False)
         # 将用户A的仓位清算
         liquidate_tx = liquidate(trader=SETTING["ADDRESS_USER"])
