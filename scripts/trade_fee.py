@@ -21,15 +21,17 @@ def get_trade_fee(tx, is_liquidate=True):
         outputAmount = liquidateEvent["baseAmount"]
         isLong = (liquidateEvent["position"]["quoteSize"] < 0)
         if isLong:
+            # input=BBB
             fee = liquidateEvent["position"]["baseSize"] * 0.001
         else:
+            # input = usdc
             reserveBase = syncEvent['reserveBase']
             reserveQuote = syncEvent['reserveQuote']
-            reserveBaseOld = reserveBase - inputAmount;
-            reserveQuoteOld = reserveQuote + outputAmount;
-            deltay = inputAmount * reserveQuoteOld / (reserveBaseOld + inputAmount)
-            # print(deltay)
-            fee = deltay - outputAmount
+            reserveBaseOld = reserveBase + outputAmount;
+            reserveQuoteOld = reserveQuote - inputAmount;
+            delay = inputAmount * reserveBaseOld / (reserveQuoteOld + inputAmount)
+            
+            fee = delay - outputAmount
 
     # 正常平仓方法
     else:
@@ -40,19 +42,24 @@ def get_trade_fee(tx, is_liquidate=True):
         data = swapEvents['data']
         inputAmount = to_uint(Web3.toHex(data[0:32]), type_str="uint256")
         outputAmount = to_uint(Web3.toHex(data[33:65]), type_str="uint256")
-        # BBB
-        if inputToken == '0x00000000000000000000000079dcf515aa18399cf8fada58720fafbb1043c526':
+        print("inputAmount: ",inputAmount )
+        print("outputAmount: ",outputAmount )
+        # BBB 
+        if inputToken == '0x0000000000000000000000008d5de6ac3732b8fbfc6d4843ac182eb725f3f741':
             fee = inputAmount * 0.001
         # usdc
         else:
             syncEvent = tx.events['Sync']
             reserveBase = syncEvent['reserveBase']
             reserveQuote = syncEvent['reserveQuote']
-            reserveBaseOld = reserveBase - inputAmount;
-            reserveQuoteOld = reserveQuote + outputAmount;
-            deltay = inputAmount * reserveQuoteOld / (reserveBaseOld + inputAmount)
-            # print(deltay)
-            fee = deltay - outputAmount
+            reserveBaseOld = reserveBase + outputAmount;
+            reserveQuoteOld = reserveQuote - inputAmount;
+            # print("reserveBaseOld: ",reserveBaseOld )
+            # print("reserveQuoteOld: ",reserveQuoteOld )
+            # input usdc 
+            delay = inputAmount * reserveBaseOld / (reserveQuoteOld + inputAmount)
+            
+            fee = delay - outputAmount
     return fee
 
     # print("returnData",Web3.toText(result))
@@ -62,10 +69,10 @@ def main():
     print("-----------")
     # BBB
     # t = chain.get_transaction('0x952f0204f0cd4a565603e9e3991f63420e38eef38bef5fd8e0ffd26abf363d83')
-    t = chain.get_transaction('0xd59f732191932fff0fa25cd826315e850bd7bf8cc23196df1871bf7e798a5a28')
+    t = chain.get_transaction('0xb79196291936525339e25675920454b1e9c0bf6f69008b9a5f13dc5df4ff5975')
     print(t.events)
 
-    fee = get_trade_fee(t, False)
+    fee = get_trade_fee(t, True)
     print(fee)
    
     # syncEvent = t.events['Sync']
