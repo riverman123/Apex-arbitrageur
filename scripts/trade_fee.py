@@ -1,4 +1,4 @@
-from brownie import  *
+from brownie import *
 from brownie.convert import to_uint
 from web3.main import Web3
 from scripts import amm
@@ -6,32 +6,31 @@ import os
 from config import config
 
 SETTING = config.SETTING
-#todo 
-def get_trade_fee(tx,is_liquidate=True):
+
+
+# todo
+def get_trade_fee(tx, is_liquidate=True):
     # 清算方法平仓
-    fee =0;
+    fee = 0;
     if is_liquidate:
         # liquidate
         liquidateEvent = tx.events["Liquidate"]
-        print(liquidateEvent)
         syncEvent = tx.events["Sync"]
         print(syncEvent)
         inputAmount = liquidateEvent["quoteAmount"]
         outputAmount = liquidateEvent["baseAmount"]
-        isLong = (liquidateEvent["position"]["quoteSize"]< 0)
+        isLong = (liquidateEvent["position"]["quoteSize"] < 0)
         if isLong:
-            fee = liquidateEvent["position"]["baseSize"]*0.001
+            fee = liquidateEvent["position"]["baseSize"] * 0.001
         else:
             reserveBase = syncEvent['reserveBase']
-            reserveQuote =syncEvent['reserveQuote']
+            reserveQuote = syncEvent['reserveQuote']
             reserveBaseOld = reserveBase - inputAmount;
             reserveQuoteOld = reserveQuote + outputAmount;
-            deltay = inputAmount*reserveQuoteOld/(reserveBaseOld+inputAmount)
-             #print(deltay)
+            deltay = inputAmount * reserveQuoteOld / (reserveBaseOld + inputAmount)
+            # print(deltay)
             fee = deltay - outputAmount
 
-        
-        
     # 正常平仓方法
     else:
         # open/close position
@@ -45,31 +44,28 @@ def get_trade_fee(tx,is_liquidate=True):
             fee = inputAmount * 0.001
         # usdc
         else:
-             syncEvent = tx.events['Sync']
-             reserveBase = syncEvent['reserveBase']
-             reserveQuote =syncEvent['reserveQuote']
-             reserveBaseOld = reserveBase - inputAmount;
-             reserveQuoteOld = reserveQuote + outputAmount;
-             deltay = inputAmount*reserveQuoteOld/(reserveBaseOld+inputAmount)
-             #print(deltay)
-             fee = deltay - outputAmount
+            syncEvent = tx.events['Sync']
+            reserveBase = syncEvent['reserveBase']
+            reserveQuote = syncEvent['reserveQuote']
+            reserveBaseOld = reserveBase - inputAmount;
+            reserveQuoteOld = reserveQuote + outputAmount;
+            deltay = inputAmount * reserveQuoteOld / (reserveBaseOld + inputAmount)
+            # print(deltay)
+            fee = deltay - outputAmount
     return fee
-
 
     # print("returnData",Web3.toText(result))
 
 
 def main():
-    print("-----------") 
+    print("-----------")
     # BBB
-    #t = chain.get_transaction('0x952f0204f0cd4a565603e9e3991f63420e38eef38bef5fd8e0ffd26abf363d83')
+    # t = chain.get_transaction('0x952f0204f0cd4a565603e9e3991f63420e38eef38bef5fd8e0ffd26abf363d83')
     t = chain.get_transaction('0x1b5197ce40b99233aa1e350544db75147b80d8a4f0f11171e06ed604e3accdcf')
     print(t.events)
     liquidateEvent = t.events["Liquidate"]
-    
-    
 
-    fee = get_trade_fee(t,True)
+    fee = get_trade_fee(t, True)
     print(fee)
     # syncEvent = t.events['Sync']
     # reserveBase = syncEvent['reserveBase']
@@ -77,12 +73,11 @@ def main():
     # print(reserveBase)
     # print(reserveQuote)
 
-
     # swapEvents =  t.events['(unknown)']
     # print(swapEvents)
     # inputToken = swapEvents['topic2']
     # data = swapEvents['data']
-    
+
     # inputAmount = Web3.toHex(data[0:32])
     # a = to_uint(inputAmount, type_str="uint256")
     # print("input: ", inputAmount)

@@ -1,6 +1,11 @@
 from brownie import *
 from web3.main import Web3
-import os 
+import os
+import time, math
+from scripts import amm, router, priceOracle, margin, config_contract
+from config import config
+from scripts import trade_fee
+import os
 import time,math
 from scripts import amm, router, priceOracle,margin , config_contract,trade_fee
 from config import config
@@ -33,30 +38,30 @@ def get_max_position(margin_amount, margin_rate):
 
 
 # 使用机器人砸低市价
-def calculate_liquidate_price(target_price,market_price,side):
+def calculate_liquidate_price(target_price, market_price, side):
     reserves = amm.getReserves()
     amm_x = reserves[0]
     amm_y = reserves[1]
     amm_l = (amm_x / (10 ** 18)) * (amm_y / (10 ** 6))
     if side == 0:
         quote_amount = math.sqrt(amm_l) * (math.sqrt(target_price) - math.sqrt(market_price))
-        router.openPositionRouter(side=1, marginAmount=20000,
-                                                         quoteAmount=int(abs(quote_amount)) + 1,
-                                                         trader=SETTING["ADDRESS_ROBOT"],
-                                                         )
+        robot_open_tx = router.openPositionRouter(side=1, marginAmount=20000,
+                                                  quoteAmount=int(abs(quote_amount)) + 1,
+                                                  trader=SETTING["ADDRESS_ROBOT"],
+                                                  )
         position_info = margin.getPosition(trader=SETTING["ADDRESS_ROBOT"])
         print("机器人仓位：", position_info)
-        print("当前的MarkPrice:",priceOracle.getMarkPrice())
+        print("当前的MarkPrice:", priceOracle.getMarkPrice())
     else:
         quote_amount = math.sqrt(amm_l) * (math.sqrt(market_price) - math.sqrt(target_price))
-        router.openPositionRouter(side=0, marginAmount=20000,
-                                                         quoteAmount=int(abs(quote_amount)) + 1,
-                                                         trader=SETTING["ADDRESS_ROBOT"],
-                                                         )
+        robot_open_tx = router.openPositionRouter(side=0, marginAmount=20000,
+                                                  quoteAmount=int(abs(quote_amount)) + 1,
+                                                  trader=SETTING["ADDRESS_ROBOT"],
+                                                  )
         position_info = margin.getPosition(trader=SETTING["ADDRESS_ROBOT"])
         print("机器人仓位：", position_info)
-        print("当前的MarkPrice:",priceOracle.getMarkPrice())
-
+        print("当前的MarkPrice:", priceOracle.getMarkPrice())
+    return robot_open_tx
 
 def get_amml():
     reserves = amm.getReservesAccurate()
@@ -112,12 +117,13 @@ def check_liquidate(side):
         print("market_price:", market_price)
         # 使用用户A10倍杠杆开多
         # marginAmount = round(amm_x_first*i/(10**21),2)
-
         quoteAmount = int(abs(math.sqrt(amm_l) * i))
         marginAmount = round(get_margin_acc(quoteAmount, amm_y_first / (10 ** 6), market_price), 2)
         print("margin:", marginAmount, "    quote_size:", quoteAmount)
-        router.openPositionRouter(side=side, marginAmount=marginAmount, quoteAmount=quoteAmount,
+        user_open_tx = router.openPositionRouter(side=side, marginAmount=marginAmount, quoteAmount=quoteAmount,
                                   trader=SETTING["ADDRESS_USER"])
+        trade_fee_amount = trade_fee.get_trade_fee(tx=user_open_tx,is_liquidate=False)
+        print("trade_fee_amount:",trade_fee_amount)
         print("用户A仓位:", margin.getPosition(SETTING["ADDRESS_USER"]))
         # 检查Amm池子的状况
         reserves = amm.getReserves(is_print=True)
@@ -127,31 +133,28 @@ def check_liquidate(side):
         # 计算用户A的清算价格
         target_price = get_liquidate_price(trader=SETTING["ADDRESS_USER"])
         # 将场内价格砸至用户a的清算价格
-        calculate_liquidate_price(target_price=abs(target_price),market_price=abs(market_price),side=1)
+        robot_open_tx = calculate_liquidate_price(target_price=abs(target_price), market_price=abs(market_price), side=side)
+        trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=robot_open_tx,is_liquidate=False)
         # 将用户A的仓位清算
-        tx = liquidate(trader=SETTING["ADDRESS_USER"])
-        print("liquidata tx :", tx)
-        #todo calculate the fee
-        liquidate_fee = trade_fee.get_trade_fee(tx=tx,is_liquidate=True)
+        liquidate_tx = liquidate(trader=SETTING["ADDRESS_USER"])
+        trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=liquidate_tx,is_liquidate=True)
         # 检查Amm池子的状况
         amm.getReserves(is_print=True)
         # 将机器人的仓位平仓
         quoteAmount = margin.getPositionAccurate(trader=SETTING["ADDRESS_ROBOT"])[1]
-        tx = margin.closePosition(trader=SETTING["ADDRESS_ROBOT"], quoteAmount=abs(quoteAmount))
-        # close_position_fee = trade_fee.get_trade_fee(tx_id=tx,is_liquidate=False)
+        robot_close_tx = margin.closePosition(trader=SETTING["ADDRESS_ROBOT"], quoteAmount=abs(quoteAmount))
+        trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=robot_close_tx,is_liquidate=False)
         # 检查Amm池子的状况
         reserves_end = amm.getReserves(is_print=True)
         amm_x_end = reserves_end[0]
         amm_y_end = reserves_end[1]
         print("池子X的变化：", (amm_x_end - amm_x_first) / (10 ** 18))
+        print("累计的手续费：", trade_fee_amount/(10**18))
+        print("池子X的盈利：", (amm_x_end - amm_x_first-trade_fee_amount)/(10 ** 18))
         print("池子y的变化：", (amm_y_end - amm_y_first) / (10 ** 6))
         margin.return_margin(SETTING["ADDRESS_ROBOT"])
         amm.setBaseReserve(base_reserves_begin)
         amm.rebaseFree()
-
-
+        print("events:",trade_fee.get_trade_fee(tx=liquidate_tx))
 def main():
     check_liquidate(0)
-    # print(get_amml())
-
-    # get_liquidate_price(trader=SETTING["ADDRESS_USER"], beta=1)
