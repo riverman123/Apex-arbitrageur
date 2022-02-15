@@ -1,3 +1,5 @@
+DEFAULT_DATABASE = 'mysql+pymysql://app_user:PLO75FbcfmFYRuQEGmygZ9PyQCQbmgeD5@"k8s-gtdtest1-mysqlext-f949425ae2-e3117b1775378365.elb.ap-southeast-1.amazonaws.com:3306/db_inverse'
+
 SETTING = {
     "URL": "https://rinkeby.arbitrum.io/rpc",
     "PRIVATE_KEY_ROBOT":"0xf072d6e5deacdc39f916f38123beddf63cd2934bb7863a5c2e62949d1bac5bee", # WALLET_PRIVATE_KEY 加0x
