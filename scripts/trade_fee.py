@@ -16,7 +16,6 @@ def get_trade_fee(tx, is_liquidate=True):
         # liquidate
         liquidateEvent = tx.events["Liquidate"]
         syncEvent = tx.events["Sync"]
-        print(syncEvent)
         inputAmount = liquidateEvent["quoteAmount"]
         outputAmount = liquidateEvent["baseAmount"]
         isLong = (liquidateEvent["position"]["quoteSize"] < 0)
@@ -40,12 +39,9 @@ def get_trade_fee(tx, is_liquidate=True):
         if len(swapEvents) == 3:
             swapEvents = swapEvents[2]
         inputToken = swapEvents['topic2']
-        print('input token', inputToken)
         data = swapEvents['data']
         inputAmount = to_uint(Web3.toHex(data[0:32]), type_str="uint256")
         outputAmount = to_uint(Web3.toHex(data[33:65]), type_str="uint256")
-        print("inputAmount: ",inputAmount )
-        print("outputAmount: ",outputAmount )
         # BBB
         if inputToken == '0x0000000000000000000000008d5de6ac3732b8fbfc6d4843ac182eb725f3f741':
             fee = inputAmount * 0.001

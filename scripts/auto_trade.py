@@ -153,4 +153,4 @@ def check_liquidate(side):
         amm.rebaseFree()
         print("events:",trade_fee.get_trade_fee(tx=liquidate_tx))
 def main():
-    check_liquidate(0)
+    check_liquidate(1)
