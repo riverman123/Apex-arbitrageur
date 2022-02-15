@@ -1,6 +1,13 @@
 from brownie import  *
 from config import config
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
+PRIVATE_KEY_USER = os.getenv("PRIVATE_KEY_USER")
+PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
+userA = accounts.add(private_key= PRIVATE_KEY_USER)
+userRobert = accounts.add(private_key= PRIVATE_KEY_ROBOT )
 
 SETTING = config.SETTING
 CONTRACT_INFO = config.CONFIG_INFO
@@ -17,3 +24,5 @@ def main():
     # print(t.events)
     print(getBeta())
     print(Iconfig.tradingSlippage())
+    Iconfig.setBeta(100, {'from': userA});
+

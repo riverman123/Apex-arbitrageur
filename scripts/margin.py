@@ -93,7 +93,9 @@ def return_margin(trader):
 def main():
     trader = SETTING["ADDRESS_USER"]
     position = getPosition(SETTING["ADDRESS_USER"])
-    print(position)
+    print("user: ",position)
+    position = getPosition(SETTING["ADDRESS_ROBOT"])
+    print("user: ",position)
     tx=  closePosition(SETTING["ADDRESS_USER"], abs(position[1]))
     print(tx)
     amount = getWithdrawable(SETTING["ADDRESS_USER"]) 
