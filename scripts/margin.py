@@ -96,7 +96,7 @@ def main():
     print(position)
     tx=  closePosition(SETTING["ADDRESS_USER"], abs(position[1]))
     print(tx)
-    amount = getWithdrawable(SETTING["ADDRESS_USER"]) * 0.8
+    amount = getWithdrawable(SETTING["ADDRESS_USER"]) 
     removeMargin(trader,amount)
     
     
