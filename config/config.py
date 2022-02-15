@@ -1,4 +1,5 @@
-DEFAULT_DATABASE = 'mysql+pymysql://app_user:PLO75FbcfmFYRuQEGmygZ9PyQCQbmgeD5@"k8s-gtdtest1-mysqlext-f949425ae2-e3117b1775378365.elb.ap-southeast-1.amazonaws.com:3306/db_inverse'
+DEFAULT_DATABASE = 'mysql+pymysql://admin:adminpaswordyyy@front-app-test-1.cktvqe5n4r6y.ap-southeast-1.rds.amazonaws.com:3306/Apex_test'
+
 
 SETTING = {
     "URL": "https://rinkeby.arbitrum.io/rpc",
