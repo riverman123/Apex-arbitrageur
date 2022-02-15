@@ -1,3 +1,6 @@
+DEFAULT_DATABASE = 'mysql+pymysql://admin:adminpaswordyyy@front-app-test-1.cktvqe5n4r6y.ap-southeast-1.rds.amazonaws.com:3306/Apex_test'
+
+
 SETTING = {
     "URL": "https://rinkeby.arbitrum.io/rpc",
     "PRIVATE_KEY_ROBOT":"0xf072d6e5deacdc39f916f38123beddf63cd2934bb7863a5c2e62949d1bac5bee", # WALLET_PRIVATE_KEY 加0x

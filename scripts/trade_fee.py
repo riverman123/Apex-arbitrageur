@@ -37,6 +37,8 @@ def get_trade_fee(tx, is_liquidate=True):
     else:
         # open/close position
         swapEvents = tx.events['(unknown)']
+        if len(swapEvents) == 3:
+            swapEvents = swapEvents[2]
         inputToken = swapEvents['topic2']
         # print('input token', inputToken)
         data = swapEvents['data']
@@ -56,9 +58,9 @@ def get_trade_fee(tx, is_liquidate=True):
             reserveQuoteOld = reserveQuote - inputAmount;
             # print("reserveBaseOld: ",reserveBaseOld )
             # print("reserveQuoteOld: ",reserveQuoteOld )
-            # input usdc 
+            # input usdc
             delay = inputAmount * reserveBaseOld / (reserveQuoteOld + inputAmount)
-            
+
             fee = delay - outputAmount
     return fee
 
