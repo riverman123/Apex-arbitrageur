@@ -1,10 +1,6 @@
 from brownie import *
 from web3.main import Web3
-import os
-import time, math
-from scripts import amm, router, priceOracle, margin, config_contract
-from config import config
-from scripts import trade_fee
+
 import os
 import time,math
 from scripts import amm, router, priceOracle,margin , config_contract,trade_fee
