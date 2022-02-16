@@ -160,7 +160,7 @@ def check_liquidate(side):
         print("池子X的盈利：", (amm_x_end - amm_x_first-trade_fee_amount)/(10 ** 18))
         print("池子y的变化：", (amm_y_end - amm_y_first) / (10 ** 6))
         
-        # margin.return_margin(SETTING["ADDRESS_USER"])
+        margin.return_margin(SETTING["ADDRESS_USER"])
         margin.return_margin(SETTING["ADDRESS_ROBOT"])
         amm.setBaseReserve(base_reserves_begin)
         amm.rebaseFree()
