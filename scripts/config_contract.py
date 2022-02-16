@@ -24,5 +24,5 @@ def main():
     # print(t.events)
     print(getBeta())
     print(Iconfig.tradingSlippage())
-    Iconfig.setBeta(100, {'from': userA});
+    Iconfig.setBeta(60, {'from': userA});
 
