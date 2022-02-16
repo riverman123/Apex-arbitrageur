@@ -59,6 +59,7 @@ def calculate_liquidate_price_and_liquidate(target_price, market_price, side):
         print("当前的MarkPrice:", priceOracle.getMarkPrice())
     return robot_open_tx
 
+
 def get_amml():
     reserves = amm.getReservesAccurate()
     amm_x = reserves[0]
@@ -88,9 +89,9 @@ def get_liquidate_price(trader):
     position_info = margin.getPositionAccurate(trader)
     amm_l = get_amml()
     v_1 = (position_info[1] ** 2) / (4 * amm_l) / (10 ** 12)
-    v_2 = position_info[1] / (position_info[0] + margin.getFundingAccurate(trader)) * (10 ** 12)
+    v_2 = position_info[1] / (position_info[0] + margin.calFundingFeeRaw(trader)) * (10 ** 12)
    
-    temp = (position_info[1] ** 2) / (4 * amm_l) / (10 ** 12) - ( position_info[1] / (position_info[0] + margin.getFundingAccurate(trader)) * (10 ** 12))
+    temp = (position_info[1] ** 2) / (4 * amm_l) / (10 ** 12) - ( position_info[1] / (position_info[0] + margin.calFundingFeeRaw(trader)) * (10 ** 12))
    
     v_3 = math.sqrt(v_1 - v_2) - beta * (position_info[1] / math.sqrt(amm_l)) / (10 ** 6)
     liquidate_price = math.pow(math.sqrt(temp) - beta * (position_info[1] / math.sqrt(amm_l)) / (10 ** 6) ,2)
@@ -131,11 +132,11 @@ def check_liquidate(side):
         print("用户A开仓后的market_price：", market_price)
         # 计算用户A的清算价格
         target_price = get_liquidate_price(trader=SETTING["ADDRESS_USER"])
+        print("funding fee A: ", margin.calFundingFee(SETTING["ADDRESS_USER"]))
         # 将场内价格砸至用户a的清算价格
         robot_open_tx = calculate_liquidate_price_and_liquidate(target_price=abs(target_price), market_price=abs(market_price), side=side)
         trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=robot_open_tx,is_liquidate=False)
         print("trade_fee robot open:",trade_fee_amount/10**18)
-        print("funding fee1: ", margin.getFundingAccurate(SETTING["ADDRESS_USER"]))
         # 将用户A的仓位清算
         liquidate_tx = liquidate(trader=SETTING["ADDRESS_USER"])
         trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=liquidate_tx,is_liquidate=True)
@@ -145,6 +146,7 @@ def check_liquidate(side):
         amm.getReserves(is_print=True)
         # 将机器人的仓位平仓
         quoteAmount = margin.getPositionAccurate(trader=SETTING["ADDRESS_ROBOT"])[1]
+        print("funding fee robot: ", margin.calFundingFee(SETTING["ADDRESS_ROBOT"]))
         robot_close_tx = margin.closePosition(trader=SETTING["ADDRESS_ROBOT"], quoteAmount=abs(quoteAmount))
         trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=robot_close_tx,is_liquidate=False)
         print("trade_fee robot close:",trade_fee_amount/10**18)
@@ -156,6 +158,8 @@ def check_liquidate(side):
         print("累计的手续费：", trade_fee_amount/(10**18))
         print("池子X的盈利：", (amm_x_end - amm_x_first-trade_fee_amount)/(10 ** 18))
         print("池子y的变化：", (amm_y_end - amm_y_first) / (10 ** 6))
+        
+        # margin.return_margin(SETTING["ADDRESS_USER"])
         margin.return_margin(SETTING["ADDRESS_ROBOT"])
         amm.setBaseReserve(base_reserves_begin)
         amm.rebaseFree()
