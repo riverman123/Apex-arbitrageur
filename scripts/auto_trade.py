@@ -103,7 +103,9 @@ def get_liquidate_price(trader):
 
 def check_liquidate(side):
     # percent_list = [0.01,0.02,0.04,0.06,0.08,0.1,0.12,0.14]
-    percent_list = [0.02]
+    percent_list = [0.1]
+    beta = config_contract.getBetaRaw()
+    print("beta: ", beta)
     for i in percent_list:
         print('>>>>>>>>>>>>>>>>>>>>>>>开仓量为总流动行性的%f' % i, '>>>>>>>>>>>>>>>>>>>>>>>>>>')
         # 检查Amm池子的状况
@@ -130,6 +132,7 @@ def check_liquidate(side):
         # 计算当前价格
         market_price = priceOracle.getMarkPrice()
         print("用户A开仓后的market_price：", market_price)
+
         # 计算用户A的清算价格
         target_price = get_liquidate_price(trader=SETTING["ADDRESS_USER"])
        
@@ -140,6 +143,10 @@ def check_liquidate(side):
         trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=robot_open_tx,is_liquidate=False)
         print("trade_fee robot open:",trade_fee_amount/10**18)
         print("funding fee A: ", margin.calFundingFee(SETTING["ADDRESS_USER"]))
+
+        market_price_acc = priceOracle.getMarkPriceAcc(amm.CONTRACT_INFO["CONTRACT_ADDRESS"], beta, quoteAmount , False)
+        print("用户A开仓后的market_price_A：", market_price_acc)
+        
         # 将用户A的仓位清算
         liquidate_tx = liquidate(trader=SETTING["ADDRESS_USER"])
         trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=liquidate_tx,is_liquidate=True)
@@ -168,4 +175,4 @@ def check_liquidate(side):
         amm.rebaseFree()
 
 def main():
-    check_liquidate(1)
+    check_liquidate(0)
