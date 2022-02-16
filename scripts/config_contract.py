@@ -19,10 +19,14 @@ def getBeta():
     beta = Iconfig.beta()
     return beta/100
 
+def getBetaRaw():
+    beta = Iconfig.beta()
+    return beta
+
 def main():
     # t = chain.get_transaction('0xc8d5fee409163ea4cac15cff17a629576f87b10adb40e0c2ae70ef8504fe47a7')
     # print(t.events)
     print(getBeta())
     print(Iconfig.tradingSlippage())
-    Iconfig.setBeta(60, {'from': userA});
+    Iconfig.setBeta(50, {'from': userA});
 
