@@ -161,4 +161,4 @@ def check_liquidate(side):
         amm.rebaseFree()
 
 def main():
-    check_liquidate(0)
+    check_liquidate(1)
