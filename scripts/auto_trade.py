@@ -103,7 +103,7 @@ def get_liquidate_price(trader):
 
 def check_liquidate(side):
     # percent_list = [0.01,0.02,0.04,0.06,0.08,0.1,0.12,0.14]
-    percent_list = [0.01]
+    percent_list = [0.1]
     for i in percent_list:
         print('>>>>>>>>>>>>>>>>>>>>>>>开仓量为总流动行性的%f' % i, '>>>>>>>>>>>>>>>>>>>>>>>>>>')
         # 检查Amm池子的状况
@@ -132,11 +132,12 @@ def check_liquidate(side):
         print("用户A开仓后的market_price：", market_price)
         # 计算用户A的清算价格
         target_price = get_liquidate_price(trader=SETTING["ADDRESS_USER"])
-        print("funding fee A: ", margin.calFundingFee(SETTING["ADDRESS_USER"]))
+       
         # 将场内价格砸至用户a的清算价格
         robot_open_tx = calculate_liquidate_price_and_liquidate(target_price=abs(target_price), market_price=abs(market_price), side=side)
         trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=robot_open_tx,is_liquidate=False)
         print("trade_fee robot open:",trade_fee_amount/10**18)
+        print("funding fee A: ", margin.calFundingFee(SETTING["ADDRESS_USER"]))
         # 将用户A的仓位清算
         liquidate_tx = liquidate(trader=SETTING["ADDRESS_USER"])
         trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=liquidate_tx,is_liquidate=True)
