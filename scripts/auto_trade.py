@@ -34,7 +34,7 @@ def get_max_position(margin_amount, margin_rate):
 
 
 # 使用机器人砸低市价
-def calculate_liquidate_price_and_liquidate(target_price, market_price, side):
+def calculate_liquidate_price_and_open_position(target_price, market_price, side):
     reserves = amm.getReserves()
     amm_x = reserves[0]
     amm_y = reserves[1]
@@ -103,7 +103,7 @@ def get_liquidate_price(trader):
 
 def check_liquidate(side):
     # percent_list = [0.01,0.02,0.04,0.06,0.08,0.1,0.12,0.14]
-    percent_list = [0.1]
+    percent_list = [0.02]
     for i in percent_list:
         print('>>>>>>>>>>>>>>>>>>>>>>>开仓量为总流动行性的%f' % i, '>>>>>>>>>>>>>>>>>>>>>>>>>>')
         # 检查Amm池子的状况
@@ -133,8 +133,10 @@ def check_liquidate(side):
         # 计算用户A的清算价格
         target_price = get_liquidate_price(trader=SETTING["ADDRESS_USER"])
        
+       # 清算率 110% todo
         # 将场内价格砸至用户a的清算价格
-        robot_open_tx = calculate_liquidate_price_and_liquidate(target_price=abs(target_price), market_price=abs(market_price), side=side)
+        robot_open_tx = calculate_liquidate_price_and_open_position(target_price=abs(target_price), market_price=abs(market_price), side=side)
+        
         trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=robot_open_tx,is_liquidate=False)
         print("trade_fee robot open:",trade_fee_amount/10**18)
         print("funding fee A: ", margin.calFundingFee(SETTING["ADDRESS_USER"]))
@@ -166,4 +168,4 @@ def check_liquidate(side):
         amm.rebaseFree()
 
 def main():
-    check_liquidate(0)
+    check_liquidate(1)
