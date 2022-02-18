@@ -1,4 +1,4 @@
-DEFAULT_DATABASE = 'mysql+pymysql://admin:adminpaswordyyy@front-app-test-1.cktvqe5n4r6y.ap-southeast-1.rds.amazonaws.com:3306/Apex_test'
+DEFAULT_DATABASE = 'mysql+pymysql://admin:adminpaswordyyy@front-app-test-1.cktvqe5n4r6y.ap-southeast-1.rds.amazonaws.com:3306/apex'
 
 
 SETTING = {

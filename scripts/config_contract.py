@@ -19,6 +19,10 @@ def getBeta():
     beta = Iconfig.beta()
     return beta/100
 
+def setBeta(beta):
+    hash_tx = Iconfig.setBeta(beta, {'from': userA})
+    return hash_tx
+
 def getBetaRaw():
     beta = Iconfig.beta()
     return beta
@@ -28,5 +32,5 @@ def main():
     # print(t.events)
     print(getBeta())
     print(Iconfig.tradingSlippage())
-    Iconfig.setBeta(50, {'from': userA});
+
 

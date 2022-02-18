@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from config import config
 import sys

@@ -1,13 +1,12 @@
-from brownie import *
-from web3.main import Web3
-
 import os
-import time,math
+import math,time
+from brownie import *
+from dotenv import load_dotenv
+
 from scripts import amm, router, priceOracle,margin , config_contract,trade_fee
 from config import config
-# from contract_helper import margin_test,priceOracle_test,router_test,amm,config_test
+from database import amm_profit_loss
 
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -57,7 +56,7 @@ def calculate_liquidate_price_and_open_position(target_price, market_price, side
         position_info = margin.getPosition(trader=SETTING["ADDRESS_ROBOT"])
         print("机器人仓位：", position_info)
         print("当前的MarkPrice:", priceOracle.getMarkPrice())
-    return robot_open_tx
+    return [robot_open_tx,position_info]
 
 
 def get_amml():
@@ -72,8 +71,9 @@ def get_amml():
 def liquidate(trader):
     debt_ratio = margin.getDebtRatio(trader)
     print('debt_ratio:', debt_ratio)
-    print('>>>>>>begin liquidate')
-    return margin.toliquidate(trader=trader)
+    print('>>>>>>begin liquidate>>>>>>')
+    hash_tx = margin.toliquidate(trader=trader)
+    return [hash_tx,debt_ratio]
 
 
 def get_margin_acc(quoteAmount, vUSD, market_price):
@@ -101,46 +101,46 @@ def get_liquidate_price(trader):
 
 # check amm
 
-def check_liquidate(side):
+def check_liquidate(side,beta):
+    config_contract.setBeta(beta)
     # percent_list = [0.01,0.02,0.04,0.06,0.08,0.1,0.12,0.14]
-    percent_list = [0.1]
+    percent_list = [0.04,0.14]
     beta = config_contract.getBetaRaw()
     print("beta: ", beta)
     for i in percent_list:
         print('>>>>>>>>>>>>>>>>>>>>>>>开仓量为总流动行性的%f' % i, '>>>>>>>>>>>>>>>>>>>>>>>>>>')
-        # 检查Amm池子的状况
-        base_reserves_begin = amm.getReservesAccurate()[0]
-        reserves = amm.getReserves(is_print=True)
-        amm_x_first = reserves[0]
-        amm_y_first = reserves[1]
+
+        amm.rebaseFree()
+        reserves_begin = amm.getReserves(is_print=True)
+        amm_x_first = reserves_begin[0]
+        amm_y_first = reserves_begin[1]
         amm_l = get_amml()
         # 计算当前价格
-        market_price = priceOracle.getMarkPrice()
-        print("market_price:", market_price)
+        market_price_begin = priceOracle.getMarkPrice()
+        print("market_price:", market_price_begin)
         # 使用用户A10倍杠杆开多
         # marginAmount = round(amm_x_first*i/(10**21),2)
         quoteAmount = int(abs(math.sqrt(amm_l) * i))
-        marginAmount = round(get_margin_acc(quoteAmount, amm_y_first / (10 ** 6), market_price), 2)
+        marginAmount = round(get_margin_acc(quoteAmount, amm_y_first / (10 ** 6), market_price_begin), 2)
         print("margin:", marginAmount, "    quote_size:", quoteAmount)
         user_open_tx = router.openPositionRouter(side=side, marginAmount=marginAmount, quoteAmount=quoteAmount,
                                   trader=SETTING["ADDRESS_USER"])
         trade_fee_amount = trade_fee.get_trade_fee(tx=user_open_tx,is_liquidate=False)
+        user_a_position = margin.getPosition(SETTING["ADDRESS_USER"])
         print("trade_fee A open:",trade_fee_amount/10**18)
-        print("用户A仓位:", margin.getPosition(SETTING["ADDRESS_USER"]))
+        print("用户A仓位:",user_a_position)
         # 检查Amm池子的状况
         reserves = amm.getReserves(is_print=True)
         # 计算当前价格
-        market_price = priceOracle.getMarkPrice()
-        print("用户A开仓后的market_price：", market_price)
-
+        market_price_after_a = priceOracle.getMarkPrice()
         # 计算用户A的清算价格
         target_price = get_liquidate_price(trader=SETTING["ADDRESS_USER"])
        
        # 清算率 110% todo
         # 将场内价格砸至用户a的清算价格
-        robot_open_tx = calculate_liquidate_price_and_open_position(target_price=abs(target_price), market_price=abs(market_price), side=side)
-        
-        trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=robot_open_tx,is_liquidate=False)
+        robot_open_info = calculate_liquidate_price_and_open_position(target_price=abs(target_price)*(1+0.01), market_price=abs(market_price_after_a), side=side)
+        trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=robot_open_info[0],is_liquidate=False)
+        market_price_after_b = priceOracle.getMarkPrice()
         print("trade_fee robot open:",trade_fee_amount/10**18)
         print("funding fee A: ", margin.calFundingFee(SETTING["ADDRESS_USER"]))
 
@@ -148,8 +148,8 @@ def check_liquidate(side):
         print("用户A开仓后的market_price_A：", market_price_acc)
         
         # 将用户A的仓位清算
-        liquidate_tx = liquidate(trader=SETTING["ADDRESS_USER"])
-        trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=liquidate_tx,is_liquidate=True)
+        liquidate_info = liquidate(trader=SETTING["ADDRESS_USER"])
+        trade_fee_amount = trade_fee_amount+trade_fee.get_trade_fee(tx=liquidate_info[0],is_liquidate=True)
         print("trade_fee A liquidate:",trade_fee_amount/10**18)
 
         # 检查Amm池子的状况
@@ -163,16 +163,22 @@ def check_liquidate(side):
         # 检查Amm池子的状况
         reserves_end = amm.getReserves(is_print=True)
         amm_x_end = reserves_end[0]
-        amm_y_end = reserves_end[1]
+        profit_loss = (amm_x_end - amm_x_first - trade_fee_amount) / (10 ** 18)
         print("池子X的变化：", (amm_x_end - amm_x_first) / (10 ** 18))
         print("累计的手续费：", trade_fee_amount/(10**18))
-        print("池子X的盈利：", (amm_x_end - amm_x_first-trade_fee_amount)/(10 ** 18))
-        print("池子y的变化：", (amm_y_end - amm_y_first) / (10 ** 6))
-        
+        print("池子X的盈利：", profit_loss)
         margin.return_margin(SETTING["ADDRESS_USER"])
         margin.return_margin(SETTING["ADDRESS_ROBOT"])
-        amm.setBaseReserve(base_reserves_begin)
+        amm.setBaseReserve(36649871750740971435566)
         amm.rebaseFree()
+        amm_profit_loss.insert_records(beta=config_contract.getBeta(),debt_ratio=liquidate_info[1],liquidity_ratio=i,base_reserves_begin=reserves_begin,market_price_begin=market_price_begin,user_a_position=user_a_position,liquidate_price=target_price,user_b_position=robot_open_info[1],market_price_after_b=market_price_after_b,profit_loss=profit_loss,profit_percent=profit_loss/(trade_fee_amount/(10**18)))
+
 
 def main():
-    check_liquidate(0)
+    # beta_list = [50,55,60,65,70,75,80,85,90,95,100]
+    beta_list = [100]
+    for i in beta_list:
+        check_liquidate(1,i)
+        time.sleep(60)
+
+
