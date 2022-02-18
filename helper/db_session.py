@@ -1,6 +1,8 @@
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from config import config
+import sys
+import csv
 
 
 def _db_init():
@@ -49,4 +51,6 @@ def execute(sql, params={}):
         raise e
 
 
-
+def writeExcel(result):
+    c = csv.writer(open("temp.csv","wb"))
+    c.writerow(result)
