@@ -63,12 +63,12 @@ def getWithdrawable(trader):
     user_wthdrawAble = IMargin.getWithdrawable(trader)
     return user_wthdrawAble
 
-def getFunding(trader):
+def calFundingFee(trader):
     funding_value = IMargin.calFundingFee(trader)
     funding_value = funding_value/(10**18)
     return funding_value
 
-def getFundingAccurate(trader):
+def calFundingFeeRaw(trader):
     funding_value = IMargin.calFundingFee(trader)
     return funding_value
 
