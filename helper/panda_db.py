@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 def db_to_csv(engin, query,file):
     df =pd.read_sql_query(query, engin)
     print("df: ", df)
+    df= df.loc[:,['beta', 'debt_ratio' , 'liquidate_price' , 'profit_percent']]
     df.to_csv(file, index=False)
 
 
