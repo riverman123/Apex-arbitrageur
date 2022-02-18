@@ -14,3 +14,4 @@ venv/
 1.json
 test.json
 venv/*
+.DS_Store
