@@ -102,8 +102,8 @@ def get_liquidate_price(trader):
 
 def check_liquidate(side,beta):
     config_contract.setBeta(beta)
-    percent_list = [0.01,0.02,0.04,0.06,0.08,0.1,0.12,0.14]
-    # percent_list = [0.01]
+    # percent_list = [0.01,0.02,0.04,0.06,0.08,0.1,0.12,0.14]
+    percent_list = [0.04,0.14]
     for i in percent_list:
         print('>>>>>>>>>>>>>>>>>>>>>>>开仓量为总流动行性的%f' % i, '>>>>>>>>>>>>>>>>>>>>>>>>>>')
 
@@ -161,11 +161,12 @@ def check_liquidate(side,beta):
         margin.return_margin(SETTING["ADDRESS_ROBOT"])
         amm.setBaseReserve(36649871750740971435566)
         amm.rebaseFree()
-        amm_profit_loss.insert_records(beta=config_contract.getBeta(),debt_ratio=liquidate_info[1],liquidity_ratio=i,base_reserves_begin=reserves_begin,market_price_begin=market_price_begin,user_a_position=user_a_position,liquidate_price=target_price,user_b_position=robot_open_info[1],market_price_after_b=market_price_after_b,profit_loss=profit_loss)
+        amm_profit_loss.insert_records(beta=config_contract.getBeta(),debt_ratio=liquidate_info[1],liquidity_ratio=i,base_reserves_begin=reserves_begin,market_price_begin=market_price_begin,user_a_position=user_a_position,liquidate_price=target_price,user_b_position=robot_open_info[1],market_price_after_b=market_price_after_b,profit_loss=profit_loss,profit_percent=profit_loss/(trade_fee_amount/(10**18)))
 
 
 def main():
-    beta_list = [50,55,60,65,70,75,80,85,90,95,100]
+    # beta_list = [50,55,60,65,70,75,80,85,90,95,100]
+    beta_list = [100]
     for i in beta_list:
         check_liquidate(1,i)
         time.sleep(60)
