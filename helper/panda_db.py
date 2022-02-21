@@ -12,4 +12,4 @@ DEFAULT_DATABASE = 'mysql+pymysql://admin:adminpaswordyyy@front-app-test-1.cktvq
 engin = create_engine(DEFAULT_DATABASE, pool_size=10, pool_recycle=7200,
                               pool_pre_ping=True, encoding='utf-8')
 
-db_to_csv(engin, 'SELECT * FROM amm_profit_loss;', '1.csv')
+db_to_csv(engin, 'SELECT * FROM amm_profit_loss where id >= 269;', '1.csv')

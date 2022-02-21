@@ -103,8 +103,8 @@ def get_liquidate_price(trader):
 
 def check_liquidate(side,beta):
     config_contract.setBeta(beta)
-    # percent_list = [0.01,0.02,0.04,0.06,0.08,0.1,0.12,0.14]
-    percent_list = [0.04,0.14]
+    percent_list = [0.01,0.02,0.04,0.06,0.08,0.1,0.12,0.14]
+    # percent_list = [0.04,0.14]
     beta = config_contract.getBetaRaw()
     print("beta: ", beta)
     for i in percent_list:
@@ -176,7 +176,7 @@ def check_liquidate(side,beta):
 
 def main():
     # beta_list = [50,55,60,65,70,75,80,85,90,95,100]
-    beta_list = [100]
+    beta_list = [90]
     for i in beta_list:
         check_liquidate(1,i)
         time.sleep(60)
