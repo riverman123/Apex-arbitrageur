@@ -115,12 +115,12 @@ def check_liquidate(side,beta):
         amm_x_first = reserves_begin[0]
         amm_y_first = reserves_begin[1]
         amm_l = get_amml()
-        # 计算当前价格
+        # calculate the current pool price
         market_price_begin = priceOracle.getMarkPrice()
         print("market_price:", market_price_begin)
-        # 使用用户A10倍杠杆开多
+        # userA 10X open long 
         # marginAmount = round(amm_x_first*i/(10**21),2)
-        quoteAmount = int(abs(math.sqrt(amm_l) * i))
+        quoteAmount = int((math.sqrt(amm_l) * i))
         marginAmount = round(get_margin_acc(quoteAmount, amm_y_first / (10 ** 6), market_price_begin), 2)
         print("margin:", marginAmount, "    quote_size:", quoteAmount)
         user_open_tx = router.openPositionRouter(side=side, marginAmount=marginAmount, quoteAmount=quoteAmount,
@@ -128,7 +128,7 @@ def check_liquidate(side,beta):
         trade_fee_amount = trade_fee.get_trade_fee(tx=user_open_tx,is_liquidate=False)
         user_a_position = margin.getPosition(SETTING["ADDRESS_USER"])
         print("trade_fee A open:",trade_fee_amount/10**18)
-        print("用户A仓位:",user_a_position)
+        print("user_a_position:",user_a_position)
         # 检查Amm池子的状况
         reserves = amm.getReserves(is_print=True)
         # 计算当前价格
