@@ -166,7 +166,7 @@ def check_liquidate(side,beta):
         profit_loss = (amm_x_end - amm_x_first - trade_fee_amount) / (10 ** 18)
         print("amm reserves base coin's variety：", (amm_x_end - amm_x_first) / (10 ** 18))
         print("the total amount trade fee：", trade_fee_amount/(10**18))
-        print("amm reserves quto coin's variety：：", profit_loss)
+        print("amm reserves quote coin's variety：：", profit_loss)
         margin.return_margin(SETTING["ADDRESS_USER"])
         margin.return_margin(SETTING["ADDRESS_ROBOT"])
         # remake the base coin's numbers
