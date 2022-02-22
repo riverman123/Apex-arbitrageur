@@ -28,13 +28,14 @@ def get_trade_fee(tx, is_liquidate=True):
             reserveQuote = syncEvent['reserveQuote']
             reserveBaseOld = reserveBase + outputAmount;
             reserveQuoteOld = reserveQuote - inputAmount;
-            delay = inputAmount * reserveBaseOld / (reserveQuoteOld + inputAmount)
+            outputWithoutFee = inputAmount * reserveBaseOld / (reserveQuoteOld + inputAmount)
             
-            fee = delay - outputAmount
+            fee = outputWithoutFee - outputAmount
 
     # 正常平仓方法
     else:
         # open/close position
+        # todo brwonie could not parse the swap event
         swapEvents = tx.events['(unknown)']
         if len(swapEvents) == 3:
             swapEvents = swapEvents[2]
@@ -55,9 +56,9 @@ def get_trade_fee(tx, is_liquidate=True):
             # print("reserveBaseOld: ",reserveBaseOld )
             # print("reserveQuoteOld: ",reserveQuoteOld )
             # input usdc
-            delay = inputAmount * reserveBaseOld / (reserveQuoteOld + inputAmount)
+            outputWithoutFee = inputAmount * reserveBaseOld / (reserveQuoteOld + inputAmount)
 
-            fee = delay - outputAmount
+            fee = outputWithoutFee - outputAmount
     return fee
 
     # print("returnData",Web3.toText(result))

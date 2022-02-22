@@ -108,7 +108,7 @@ def check_liquidate(side,beta):
     beta = config_contract.getBetaRaw()
     print("beta: ", beta)
     for i in percent_list:
-        print('>>>>>>>>>>>>>>>>>>>>>>>开仓量为总流动行性的%f' % i, '>>>>>>>>>>>>>>>>>>>>>>>>>>')
+        print('>>>>>>>>>>>>>>>>>>>>>>>the percentage of the pool liquidity%f' % i, '>>>>>>>>>>>>>>>>>>>>>>>>>>')
         # rebase amm liquidity
         amm.rebaseFree()
         # get reserves of the amm
@@ -116,10 +116,14 @@ def check_liquidate(side,beta):
         amm_x_first = reserves_begin[0]
         amm_y_first = reserves_begin[1]
         amm_l = get_amml()
-        # get market price by priceOracle contract
+
+        # calculate the current pool price
         market_price_begin = priceOracle.getMarkPrice()
         print("market_price:", market_price_begin)
-        quoteAmount = int(abs(math.sqrt(amm_l) * i))
+        # userA 10X open long 
+        # marginAmount = round(amm_x_first*i/(10**21),2)
+        quoteAmount = int((math.sqrt(amm_l) * i))
+
         marginAmount = round(get_margin_acc(quoteAmount, amm_y_first / (10 ** 6), market_price_begin), 2)
         print("margin:", marginAmount, "    quote_size:", quoteAmount)
         # open a position with user A and Leverage nearby 10
@@ -130,7 +134,8 @@ def check_liquidate(side,beta):
         # get the position inf of the user A
         user_a_position = margin.getPosition(SETTING["ADDRESS_USER"])
         print("trade_fee A open:",trade_fee_amount/10**18)
-        print("用户A仓位:",user_a_position)
+        print("user_a_position:",user_a_position)
+       
         # check the amm liquidity now
         reserves = amm.getReserves(is_print=True)
         # get the market price now
