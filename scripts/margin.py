@@ -1,11 +1,10 @@
 from brownie import  *
 from config import config
-from helper import trade_helper
 import os
 
-SETTING = config.SETTING
-CONTRACT_INFO = config.MARGIN_CONTRACT_INFO
-IMargin = interface.IMargin(CONTRACT_INFO["CONTRACT_ADDRESS"])
+
+CONTRACT_INFO = config.CONTRACT_ADDRESS
+IMargin = interface.IMargin(CONTRACT_INFO["pairs"]["ETH/USD"]["amm"])
 PRIVATE_KEY_USER = os.getenv("PRIVATE_KEY_USER")
 PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
 userA = accounts.add(private_key= PRIVATE_KEY_USER)
@@ -91,14 +90,14 @@ def return_margin(trader):
         removeMargin(trader=trader,withdrawAmount=user_wthdrawAble)
 
 def main():
-    trader = SETTING["ADDRESS_USER"]
-    position = getPosition(SETTING["ADDRESS_USER"])
+    
+    position = getPosition(userA.address)
     print("user: ",position)
-    position = getPosition(SETTING["ADDRESS_ROBOT"])
-    print("user: ",position)
-    tx=  closePosition(SETTING["ADDRESS_USER"], abs(position[1]))
-    print(tx)
-    amount = getWithdrawable(SETTING["ADDRESS_USER"]) 
-    removeMargin(trader,amount)
+    # position = getPosition(SETTING["ADDRESS_ROBOT"])
+    # print("user: ",position)
+    # tx=  closePosition(SETTING["ADDRESS_USER"], abs(position[1]))
+    # print(tx)
+    # amount = getWithdrawable(SETTING["ADDRESS_USER"]) 
+    # removeMargin(trader,amount)
     
     

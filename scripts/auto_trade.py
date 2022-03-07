@@ -4,7 +4,7 @@ from brownie import *
 from dotenv import load_dotenv
 
 from scripts import amm, router, priceOracle,margin , config_contract,trade_fee
-from config import config
+from config.prod import config
 from database import amm_profit_loss
 
 

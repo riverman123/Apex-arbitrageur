@@ -9,9 +9,9 @@ PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
 userA = accounts.add(private_key= PRIVATE_KEY_USER)
 userRobert = accounts.add(private_key= PRIVATE_KEY_ROBOT )
 
-SETTING = config.SETTING
-CONTRACT_INFO = config.CONFIG_INFO
-Iconfig = interface.IConfig(CONTRACT_INFO["CONTRACT_ADDRESS"])
+
+CONTRACT_INFO = config.CONTRACT_ADDRESS
+Iconfig = interface.IConfig(CONTRACT_INFO["config"])
 
 
 

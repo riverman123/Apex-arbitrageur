@@ -10,9 +10,8 @@ PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
 userA = accounts.add(private_key= PRIVATE_KEY_USER)
 userRobert = accounts.add(private_key= PRIVATE_KEY_ROBOT )
 
-CONTRACT_INFO = config.AMM_CONTRACT_INFO
-#IAmm = interface.IAmm(CONTRACT_INFO["CONTRACT_ADDRESS"])
-IAmm = interface.IAmm('0x59b7fefdae5000ef5528317a381bcbe4b6a26758')
+CONTRACT_INFO = config.CONTRACT_ADDRESS
+IAmm = interface.IAmm(CONTRACT_INFO["pairs"]["ETH/USD"]["amm"])
 
 
 def getReserves(is_print=False):
@@ -36,13 +35,13 @@ def rebaseFree():
     return tx
 
 def main():
-    IAmm.rebase({"from": userA})
+    #IAmm.rebase({"from": userA})
     # t = chain.get_transaction('0xc8d5fee409163ea4cac15cff17a629576f87b10adb40e0c2ae70ef8504fe47a7')
     # print(t.events)
     # reserve =  IAmm.getReserves()
     # print(reserve)
     # tx =  IAmm.rebaseFree({"from": userA})
     # print(tx.events)
-    print(rebaseFree())
-    # reserve =  IAmm.getReserves()
-    # print(reserve)
+    #print(rebaseFree())
+    reserve =  IAmm.getReserves()
+    print(reserve)

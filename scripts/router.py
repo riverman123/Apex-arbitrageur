@@ -4,9 +4,8 @@ from config import config
 import sys
 
 
-CONTRACT_INFO = config.ROUTER_CONTRACT_INFO
-TOKEN_INFO = config.TOKEN_INFO
-IRouter = interface.IRouter(CONTRACT_INFO["CONTRACT_ADDRESS"])
+CONTRACT_INFO = config.CONTRACT_ADDRESS
+IRouter = interface.IRouter(CONTRACT_INFO["router"])
 
 
 def getPosition(baseToken,quoteToken,trader):
@@ -28,8 +27,8 @@ def openPositionRouter(side, marginAmount, quoteAmount,trader,deadline=195751589
     return tx
 
 def main():
-    t = chain.get_transaction('0xc8d5fee409163ea4cac15cff17a629576f87b10adb40e0c2ae70ef8504fe47a7')
-    print(t.events)
+    # t = chain.get_transaction('0xc8d5fee409163ea4cac15cff17a629576f87b10adb40e0c2ae70ef8504fe47a7')
+    # print(t.events)
     print("base_limit:", sys.maxsize)
     # print(getPosition("0x4c3C90d25c93d08853b61c81cFd95d58c3B0C073", "", ""))
     
