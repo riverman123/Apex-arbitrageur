@@ -3,16 +3,14 @@ from config import config
 import os
 
 
-CONTRACT_INFO = config.CONTRACT_ADDRESS
-IMargin = interface.IMargin(CONTRACT_INFO["pairs"]["ETH/USD"]["margin"])
 PRIVATE_KEY_USER = os.getenv("PRIVATE_KEY_USER")
 PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
 userA = accounts.add(private_key= PRIVATE_KEY_USER)
 userRobert = accounts.add(private_key= PRIVATE_KEY_ROBOT )
 
 # add margin to margin contract
-def addMargin(trader, quoteAmount):
-    tx = IMargin.addMargin(trader,quoteAmount*(10**6),{
+def addMargin(address , trader, quoteAmount):
+    tx = interface.IMargin(address).addMargin(trader,quoteAmount*(10**6),{
         'from': trader,
         'gas': 1200000
     })
@@ -20,8 +18,8 @@ def addMargin(trader, quoteAmount):
     return tx
 
 # use margin removeMargin function to return traders margin
-def removeMargin(trader,withdrawAmount):
-    tx = IMargin.removeMargin(trader,trader,withdrawAmount,{
+def removeMargin(address,trader,withdrawAmount):
+    tx = interface.IMargin(address).removeMargin(trader,trader,withdrawAmount,{
         'from': trader,
         'gas': 1200000
     })
@@ -29,8 +27,8 @@ def removeMargin(trader,withdrawAmount):
     return tx
 
 # use margin openPosition function to open position
-def openPosition(trader,quoteAmount,side):
-    tx = IMargin.openPosition(trader,side,quoteAmount,{
+def openPosition(address,trader,quoteAmount,side):
+    tx = interface.IMargin(address).openPosition(trader,side,quoteAmount,{
         'from': trader,
         'gas': 1200000
     })
@@ -38,53 +36,39 @@ def openPosition(trader,quoteAmount,side):
 
 # use margin closePosition function to close position
 # todo robot 
-def closePosition(trader,quoteAmount):
-    tx = IMargin.closePosition(trader,quoteAmount,{
-        'from': trader,
-        'gas': 1200000
+def closePosition(address,trader,quoteAmount):
+    tx = interface.IMargin(address).closePosition(trader,quoteAmount,{
+        'from': trader
     })
     return tx
 
 # use margin getPosition function to get position information
-def getPosition(trader):
-    position_value = IMargin.getPosition(trader)
-    position0 = position_value[0]/(10**18)
-    position1 = position_value[1]/(10**6)
-    position2 = position_value[2]/(10**18)
-    return position_value
-
-def getPositionAccurate(trader):
-    position_value = IMargin.getPosition(trader)
+def getPositionAccurate(address,trader):
+    position_value = interface.IMargin(address).getPosition(trader)
     return position_value
 
 # use margin getWithdrawable function to get position maximum withdraw margin value
-def getWithdrawable(trader):
-    user_wthdrawAble = IMargin.getWithdrawable(trader)
+def getWithdrawable(address,trader):
+    user_wthdrawAble = interface.IMargin(address).getWithdrawable(trader)
     return user_wthdrawAble
 
-def calFundingFee(trader):
-    funding_value = IMargin.calFundingFee(trader)
-    funding_value = funding_value/(10**18)
+def calFundingFee(address,trader):
+    funding_value = interface.IMargin(address).calFundingFee(trader)
+    #funding_value = funding_value/(10**18)
     return funding_value
 
-def calFundingFeeRaw(trader):
-    funding_value = IMargin.calFundingFee(trader)
-    return funding_value
-
-
-def getDebtRatio(trader):
-    debt_Ratio = IMargin.calDebtRatio(trader)
+def getDebtRatio(address,trader):
+    debt_Ratio = interface.IMargin(address).calDebtRatio(trader)
     print(debt_Ratio)
     return debt_Ratio
 
-def toliquidate(trader):
-    tx = IMargin.liquidate(trader,{
-        'from': trader,
-        'gas': 1200000
+def toliquidate(address,trader):
+    tx = interface.IMargin(address).liquidate(trader,{
+        'from': trader
     })
     return tx
 
-def return_margin(trader):
+def return_margin(address,trader):
     user_wthdrawAble = getWithdrawable(trader)
     if user_wthdrawAble > 0 :
         removeMargin(trader=trader,withdrawAmount=user_wthdrawAble)
