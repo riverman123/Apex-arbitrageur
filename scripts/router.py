@@ -12,7 +12,7 @@ def getPosition(baseToken,quoteToken,trader):
     position_value = IRouter.getPosition(baseToken,quoteToken,trader)
     return position_value
 
-def openPositionRouter(side, marginAmount, quoteAmount,trader,deadline=1957515898, baseToken=TOKEN_INFO["BBB"], quoteToken=TOKEN_INFO["mockUSDC"]):
+def openPositionRouter(side, marginAmount, quoteAmount,trader,deadline, baseToken, quoteToken):
     if side == 0:
         base_limit = 0
     else:
@@ -21,10 +21,26 @@ def openPositionRouter(side, marginAmount, quoteAmount,trader,deadline=195751589
     baseToken=to_address(baseToken)
     # buildTransaction
     tx = IRouter.openPositionWithWallet(baseToken,quoteToken,side,int(marginAmount*(10**18)),int(quoteAmount*(10**6)),base_limit,deadline, {
-        'from': trader,
-        'gas': 1200000})
+        'from': trader})
     
     return tx
+
+
+def openPositionETHWithWallet(side, marginAmount, quoteAmount,trader,deadline, baseToken, quoteToken):
+    if side == 0:
+        base_limit = 0
+    else:
+        base_limit = sys.maxsize*sys.maxsize
+    # 将取到的地址，变得可用
+    baseToken=to_address(baseToken)
+    # buildTransaction
+    tx = IRouter.openPositionETHWithWallet(quoteToken,side,int(quoteAmount*(10**6)),base_limit,deadline, {
+        'from': trader,
+        'value': marginAmount * 1e18})
+    
+    return tx
+
+
 
 def main():
     # t = chain.get_transaction('0xc8d5fee409163ea4cac15cff17a629576f87b10adb40e0c2ae70ef8504fe47a7')

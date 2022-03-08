@@ -4,7 +4,7 @@ import os
 
 
 CONTRACT_INFO = config.CONTRACT_ADDRESS
-IMargin = interface.IMargin(CONTRACT_INFO["pairs"]["ETH/USD"]["amm"])
+IMargin = interface.IMargin(CONTRACT_INFO["pairs"]["ETH/USD"]["margin"])
 PRIVATE_KEY_USER = os.getenv("PRIVATE_KEY_USER")
 PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
 userA = accounts.add(private_key= PRIVATE_KEY_USER)
@@ -30,7 +30,7 @@ def removeMargin(trader,withdrawAmount):
 
 # use margin openPosition function to open position
 def openPosition(trader,quoteAmount,side):
-    tx = IMargin.OpenPosition(trader,side,quoteAmount*(10**6),{
+    tx = IMargin.openPosition(trader,side,quoteAmount,{
         'from': trader,
         'gas': 1200000
     })

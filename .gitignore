@@ -16,3 +16,5 @@ test.json
 venv/*
 .DS_Store
 *.csv
+quant/
+tools

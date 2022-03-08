@@ -1,5 +1,6 @@
 from brownie import  *
 import os
+import time
 from config import config
 
 from dotenv import load_dotenv
@@ -14,25 +15,21 @@ CONTRACT_INFO = config.CONTRACT_ADDRESS
 IAmm = interface.IAmm(CONTRACT_INFO["pairs"]["ETH/USD"]["amm"])
 
 
-def getReserves(is_print=False):
-    reserves = IAmm.getReserves()
-    if is_print == True:
-        print('x:',reserves[0]/(10**18))
-        print('y:',reserves[1]/(10**6))
+def getReserves(address):
+    reserves = interface.IAmm(address).getReserves()
     return reserves
 
-def getReservesAccurate():
-    reserves = IAmm.getReserves()
-    return reserves
+def  getBaseToken(address) : 
+     baseToken = interface.IAmm(address).baseToken()
+     return baseToken
 
-def setBaseReserve(base_reserve):
-    print("base_reserve:",base_reserve)
-    tx = IAmm.setBaseReserve(base_reserve , {'from': userA})
-    return tx
 
-def rebaseFree():
-    tx = IAmm.rebaseFree({'from': userA})
-    return tx
+
+def  getQuoteToken(address) : 
+     quoteToken = interface.IAmm(address).quoteToken()
+     return quoteToken
+
+
 
 def main():
     #IAmm.rebase({"from": userA})
@@ -44,4 +41,5 @@ def main():
     # print(tx.events)
     #print(rebaseFree())
     reserve =  IAmm.getReserves()
-    print(reserve)
+    secondsSinceEpoch = time.time()
+    print(secondsSinceEpoch)

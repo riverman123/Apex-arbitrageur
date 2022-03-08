@@ -2,16 +2,15 @@ from brownie import  *
 from config import config
 
 CONTRACT_INFO = config.CONTRACT_ADDRESS
-amm_address = config.CONTRACT_ADDRESS["amm"]
 IPriceOracle = interface.IPriceOracle(CONTRACT_INFO["priceoracle"])
 
 
 
-def getIndexPrice(address=amm_address):
+def getIndexPrice(address):
     indexPrice = IPriceOracle.getIndexPrice(address)
     return indexPrice
 
-def getMarkPrice(address=amm_address):
+def getMarkPrice(address):
     markPrice = IPriceOracle.getMarkPrice(address)
     return markPrice/(10**18)
 
