@@ -1,5 +1,5 @@
 import os
-
+import json
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -66,3 +66,10 @@ print(exchange.privateGetTradeOrdersPending())
 
 # =====其他操作
 # 下市价单，自动撤单，合约相关操作，等等等等，都可以自动运行
+# ETH-USD-SWAP
+# ===== U 本位永续合约市价平仓
+# swap_market_order_info = exchange.private_post_trade_close_position({"instId":"ETH-USD-SWAP","mgnMode":"isolated"})
+# print(json.dumps(swap_market_order_info,sort_keys=True, indent=4, separators=(',', ': ')))
+positions = exchange.fetch_position('ETH-USD-SWAP')
+print(json.dumps(positions,sort_keys=True, indent=4, separators=(',', ': ')))
+
