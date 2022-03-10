@@ -27,7 +27,7 @@ exchange = ccxt.okex(OKEX_CONFIG)   # 其他交易所为huobipro, binance, okex
 
 # =====获取账户余额
 balance = exchange.fetch_balance()
-print(balance)
+#print(balance)
 
 
 # 限价单买
@@ -62,14 +62,14 @@ print(exchange.privateGetTradeOrdersPending())
 
 
 # 取消合约订单
-#cancel_result = exchange.cancel_order("420531040892108800","CRV-USDT-SWAP")
+#cancel_result = exchange.cancel_order("421362326888136704","CRV-USDT-SWAP")
 
 # =====其他操作
 # 下市价单，自动撤单，合约相关操作，等等等等，都可以自动运行
 # ETH-USD-SWAP
 # ===== U 本位永续合约市价平仓
-# swap_market_order_info = exchange.private_post_trade_close_position({"instId":"ETH-USD-SWAP","mgnMode":"isolated"})
-# print(json.dumps(swap_market_order_info,sort_keys=True, indent=4, separators=(',', ': ')))
+swap_market_order_info = exchange.private_post_trade_close_position({"instId":"ETH-USD-SWAP","mgnMode":"isolated"})
+print(json.dumps(swap_market_order_info,sort_keys=True, indent=4, separators=(',', ': ')))
 positions = exchange.fetch_position('ETH-USD-SWAP')
 print(json.dumps(positions,sort_keys=True, indent=4, separators=(',', ': ')))
 

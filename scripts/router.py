@@ -26,6 +26,20 @@ def openPositionRouter(side, marginAmount, quoteAmount,trader,deadline, baseToke
     return tx
 
 
+def closePosition(baseToken, quoteToken, quoteAmount,deadline, autoWithdraw):
+    if side == 0:
+        base_limit = 0
+    else:
+        base_limit = sys.maxsize*sys.maxsize
+    # 将取到的地址，变得可用
+    baseToken=to_address(baseToken)
+    # buildTransaction
+    tx = IRouter.openPositionWithWallet(baseToken,quoteToken,side,int(marginAmount*(10**18)),int(quoteAmount*(10**6)),base_limit,deadline, {
+        'from': trader})
+    
+    return tx
+
+
 def openPositionETHWithWallet(side, marginAmount, quoteAmount,trader,deadline, baseToken, quoteToken):
     if side == 0:
         base_limit = 0
