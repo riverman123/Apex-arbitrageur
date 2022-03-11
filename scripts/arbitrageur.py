@@ -11,8 +11,8 @@ load_dotenv()
 ammAddress = "0x3eb6ccE3A2213C013eD9345faEbE2ef56c33609A"
 marginAddress = "0x2fE7fC775D8eD8Da9fc1eEbfBAbfb57304448A03"
 perp_pair = "ETH-USD-SWAP"
-spread_range_open = 0.01
-spread_range_close = 0.005
+spread_range_open = 0.05   # 5%
+spread_range_close = 0.01  # 1%
 leverage = 3
 marginAmount = 0.02  # eth
 PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
@@ -164,5 +164,5 @@ def main():
     while True:
       #time.sleep(10)
       exchange = initCex()
-      hasPosition = True;
+      hasPosition = False;
       arbitrate(exchange, hasPosition )
