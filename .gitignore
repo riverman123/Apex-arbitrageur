@@ -18,3 +18,4 @@ venv/*
 *.csv
 quant/
 tools
+__pycache__/
