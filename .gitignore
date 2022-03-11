@@ -17,5 +17,4 @@ venv/*
 .DS_Store
 *.csv
 quant/
-
 __pycache__/
