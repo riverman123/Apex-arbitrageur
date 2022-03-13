@@ -16,7 +16,6 @@ CONTRACT_ADDRESS = {
                 "baseToken": "weth",
                 "quoteToken": "usd"
             }
-        }
-    
-
+        },
+    "mainnetLendingPoolAddressProvider": "0xb53c1a33016b2dc2ff3653530bff1848a515c8c5"  # mainnet address
 }
