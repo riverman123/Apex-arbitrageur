@@ -6,12 +6,8 @@ import pandas as pd
 
 CONTRACT_INFO = config.CONTRACT_ADDRESS
 networkname = network.show_active()
-lendingPoolAddress = ""
-if(networkname == "mainnet"):
-    lendingPoolAddress = CONTRACT_INFO["LendingPoolAddressProvider"]["mainnet"]
-elif(networkname == "matic"):
-    lendingPoolAddress = CONTRACT_INFO["LendingPoolAddressProvider"]["matic"]
-ILendingPoolAddressesProvider = interface.ILendingPoolAddressesProvider(lendingPoolAddress)
+lendingPoolProviderAddress = CONTRACT_INFO["LendingPoolAddressProvider"][networkname]
+ILendingPoolAddressesProvider = interface.ILendingPoolAddressesProvider(lendingPoolProviderAddress)
 lendingPoolAddress = ILendingPoolAddressesProvider.getLendingPool()
 ILendingPool = interface.ILendingPool(lendingPoolAddress)
 aaveOacleAddress = interface.IAAVEPriceOracle(ILendingPoolAddressesProvider.getPriceOracle())
