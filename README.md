@@ -1,4 +1,6 @@
 # Apex-tarde-test
+
+The apex-arbitrageur is an arbitrage bot that can be run on AWS Lambda (works with free tier) or locally. The bot allows you to execute automated trading strategies between Apex Protocol (site, docs) and  CEX.
 ## install dependency
  pip3 install -r requirements.txt
 
