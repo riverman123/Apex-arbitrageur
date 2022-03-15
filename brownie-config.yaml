@@ -6,6 +6,8 @@ autofetch_sources: true
 dotenv: .env
 compiler:
   solc:
-    version: 0.8.0
+    optimizer:
+      enabled: true
+    # version: 0.8.3  ## have contracts with different sol version, need to annotation this field
     remappings:
       - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@3.4.0"
