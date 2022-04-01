@@ -26,7 +26,21 @@ def  getQuoteToken(address) :
      return quoteToken
 
 
-
 def main():
-    secondsSinceEpoch = time.time()
-    print(secondsSinceEpoch)
+    address = "0x1067e124e0c8af7c540e9e3184815f73cda5790a"
+    reserves = getReserves(address)
+    print(reserves[0])
+    print(reserves[1])
+    print(interface.IAmm(address).getFeeLiquidity())
+    print(interface.IAmm(address).getTheMaxBurnLiquidity())
+    print(interface.IERC20(address).totalSupply())
+    print(interface.IAmm(address).getRealBaseReserve());
+
+    #9.78372558 btc
+    #511054.208734 usdc
+
+    # netpositon -11063.62usdc
+    #fee liquidity 218062
+    #maxLiquidity 17140253131
+    #total Liquidity 22360469331
+    #realBaseReserve 10.00503189

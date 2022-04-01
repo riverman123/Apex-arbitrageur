@@ -73,10 +73,17 @@ def return_margin(address,trader):
     if user_wthdrawAble > 0 :
         removeMargin(trader=trader,withdrawAmount=user_wthdrawAble)
 
-def main():
+def netPostion(address ): 
+    netposition = interface.IMargin(address).netPosition()
+    return netposition;
     
-    position = getPosition(userA.address)
+def main():
+    address = "0x1171ac226a25e3a7501b85296f92e55b029fae69"
+    user = "0xAD3A45194eC873d8d6ED908590CF59F7309d6a5f"
+    position = getPositionAccurate(address,user)
     print("user: ",position)
+    netPisition = netPostion(address)
+    print("netPisition: ",netPisition)
     # position = getPosition(SETTING["ADDRESS_ROBOT"])
     # print("user: ",position)
     # tx=  closePosition(SETTING["ADDRESS_USER"], abs(position[1]))

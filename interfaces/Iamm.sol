@@ -85,4 +85,10 @@ interface IAmm {
     ) external view returns (uint256[2] memory amounts);
 
     function MINIMUM_LIQUIDITY() external pure returns (uint256);
+
+    function getFeeLiquidity() external view returns (uint256);
+
+    function getTheMaxBurnLiquidity() external view returns (uint256 maxLiquidity);
+
+    function getRealBaseReserve() external view returns (uint256 realBaseReserve) ;
 }
