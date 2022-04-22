@@ -13,5 +13,7 @@ The apex-arbitrageur is an arbitrage bot that can be run on AWS Lambda (works wi
 
 2. brownie run arbitrageur.py --network arbitrum
 
-3. brownie run auto_trade.py --network arbitestnet
+// for robert 
+3. brownie run auto_trade.py --network arbitestnet 
+
 
