@@ -4,15 +4,15 @@ from config import config
 import sys
 
 
-CONTRACT_INFO = config.CONTRACT_ADDRESS
-IRouter = interface.IRouter(CONTRACT_INFO["router"])
+# CONTRACT_INFO = config.CONTRACT_ADDRESS
+# IRouter = interface.IRouter(CONTRACT_INFO["router"])
 
 
-def getPosition(baseToken,quoteToken,trader):
-    position_value = IRouter.getPosition(baseToken,quoteToken,trader)
+def getPosition(address, baseToken,quoteToken,trader):
+    position_value = interface.IRouter(address).getPosition(baseToken,quoteToken,trader)
     return position_value
 
-def openPositionRouter(side, marginAmount, quoteAmount,trader,deadline, baseToken, quoteToken):
+def openPositionRouter(address, side, marginAmount, quoteAmount,trader,deadline, baseToken, quoteToken):
     if side == 0:
         base_limit = 0
     else:
@@ -20,35 +20,40 @@ def openPositionRouter(side, marginAmount, quoteAmount,trader,deadline, baseToke
     # 将取到的地址，变得可用
     baseToken=to_address(baseToken)
     # buildTransaction
-    tx = IRouter.openPositionWithWallet(baseToken,quoteToken,side,int(marginAmount*(10**18)),int(quoteAmount*(10**6)),base_limit,deadline, {
+    tx = interface.IRouter(address).openPositionWithWallet(baseToken,quoteToken,side,int(marginAmount*(10**18)),int(quoteAmount*(10**6)),base_limit,deadline, {
         'from': trader})
     
     return tx
 
 
-def closePosition(baseToken, quoteToken, quoteAmount,deadline, autoWithdraw):
-    if side == 0:
-        base_limit = 0
-    else:
-        base_limit = sys.maxsize*sys.maxsize
-    # 将取到的地址，变得可用
-    baseToken=to_address(baseToken)
+def closePosition(address , baseToken, quoteToken, quoteAmount,deadline, autoWithdraw, trader):
+   
+   
     # buildTransaction
-    tx = IRouter.openPositionWithWallet(baseToken,quoteToken,side,int(marginAmount*(10**18)),int(quoteAmount*(10**6)),base_limit,deadline, {
+    tx = interface.IRouter(address).closePosition(baseToken,quoteToken, quoteAmount,deadline,autoWithdraw, {
         'from': trader})
     
     return tx
 
 
-def openPositionETHWithWallet(side, marginAmount, quoteAmount,trader,deadline, baseToken, quoteToken):
+def closePositionETH(address , quoteToken, quoteAmount,deadline, trader):
+   
+    # buildTransaction
+    tx = interface.IRouter(address).closePositionETH(quoteToken, quoteAmount,deadline, {
+        'from': trader})
+    
+    return tx
+
+
+
+def openPositionETHWithWallet(address , side, marginAmount, quoteAmount,trader,deadline, quoteToken):
     if side == 0:
         base_limit = 0
     else:
         base_limit = sys.maxsize*sys.maxsize
     # 将取到的地址，变得可用
-    baseToken=to_address(baseToken)
     # buildTransaction
-    tx = IRouter.openPositionETHWithWallet(quoteToken,side,int(quoteAmount*(10**6)),base_limit,deadline, {
+    tx = interface.IRouter(address).openPositionETHWithWallet(quoteToken,side,quoteAmount,base_limit,deadline, {
         'from': trader,
         'value': marginAmount * 1e18})
     
