@@ -9,6 +9,7 @@ import time
 import random
 load_dotenv()
 
+# fix when new deploy
 ammAddress = "0x9Da2964847B82C7DBB13C36AeE0E80E530754edc"
 marginAddress = "0xA91BfB9F505b9eB4CC44944F1D8a3DcBF3CB8eac"
 routerAddress = "0x70b91fc6a35c62aa6f14a62d09a84797f1e4346b"

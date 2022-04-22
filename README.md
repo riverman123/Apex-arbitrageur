@@ -8,11 +8,16 @@ The apex-arbitrageur is an arbitrage bot that can be run on AWS Lambda (works wi
  - testnet: brownie networks add live arbitestnet host=https://rinkeby.arbitrum.io/rpc chainid=421611
  -  arbi: brownie networks add live arbitrum host=https://arb1.arbitrum.io/rpc chainid=42161
 
+
+## env
+ python  3.9.6
+
 ## run 
 1. brownie compile
 
 2. brownie run arbitrageur.py --network arbitrum
 
+ 
   // for robert  
 
 3. brownie run auto_trade.py --network arbitestnet 
