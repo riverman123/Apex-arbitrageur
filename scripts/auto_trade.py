@@ -15,7 +15,7 @@ url = "https://raw.githubusercontent.com/ApeX-Protocol/config/main/contracts-tes
 
 perp_pair = "ETH-USD-SWAP"
 PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
-userRobert = accounts.add(private_key=PRIVATE_KEY_ROBOT)
+userRobert = accounts.add(private_key = PRIVATE_KEY_ROBOT)
 deadline = 1948807072;
 
 marginAmount= 0.05
@@ -49,7 +49,7 @@ def auto_trade():
          if(quoteAmount>10000000000):
                # 2W close position
             router.closePositionETH(routerAddress, quoteToken , quoteAmount=abs(quoteAmount), deadline = deadline, trader = userRobert.address)
-            print("close position long")
+            print("close big position wrong")
 
         #  # withdraw margin
         #  withdrawableAmount = margin.getWithdrawable(marginAddress, userRobert.address);
@@ -59,15 +59,19 @@ def auto_trade():
          isLong = random.randint(0,1)
          quoteAmountRandom = random.randint(50,1000) * 1000000
         
-         if(isLong): 
-          
-            router.openPositionETHWithWallet(routerAddress,0, marginAmount, quoteAmountRandom,userRobert.address, deadline, quoteToken );
-            print("open long")
+         try:
+          if(isLong): 
+            
+              router.openPositionETHWithWallet(routerAddress,0, marginAmount, quoteAmountRandom,userRobert.address, deadline, quoteToken );
+              print("open long")
 
-         else:
+          else:
 
-            router.openPositionETHWithWallet(routerAddress,1, marginAmount, quoteAmountRandom,userRobert.address, deadline, quoteToken );
-            print("open short")
+              router.openPositionETHWithWallet(routerAddress,1, marginAmount, quoteAmountRandom,userRobert.address, deadline, quoteToken );
+              print("open short")
+         except  Exception as err:
+              print("open position wrong!");      
+              print(err);      
          
          count+=1
          print("count", count)
@@ -79,6 +83,7 @@ def auto_trade():
                try:
                  router.closePositionETH(routerAddress, quoteToken , quoteAmount=abs(quoteAmount1), deadline = deadline, trader = userRobert.address)
                except  Exception as err:
+                 print("close position wrong!");  
                  print(err);
                count =0
                [routerAddress,ammAddress, marginAddress ]=fetchContractAddress();
@@ -97,10 +102,7 @@ def auto_trade():
 
 
 def main():
-  
       
-     
-
         try: 
             auto_trade();
             
