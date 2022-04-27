@@ -7,27 +7,40 @@ from config import config
 from dotenv import load_dotenv
 import time
 import random
+import requests, json 
 load_dotenv()
 
-# fix when new deploy
-ammAddress = "0x9Da2964847B82C7DBB13C36AeE0E80E530754edc"
-marginAddress = "0xA91BfB9F505b9eB4CC44944F1D8a3DcBF3CB8eac"
-routerAddress = "0x70b91fc6a35c62aa6f14a62d09a84797f1e4346b"
 
-baseToken  = interface.IAmm(ammAddress).baseToken()
-quoteToken = interface.IAmm(ammAddress).quoteToken()
+url = "https://raw.githubusercontent.com/ApeX-Protocol/config/main/contracts-test.json"
+
 perp_pair = "ETH-USD-SWAP"
 PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
 userRobert = accounts.add(private_key=PRIVATE_KEY_ROBOT)
 deadline = 1948807072;
 
 marginAmount= 0.05
+sleep = 120
 
+def fetchContractAddress():
+      response = requests.get(url)
+      data = response.json()
+      print(data)
+      routerAddress = data["router"]["address"]
+      ammAddress = data["pairs"]["ETH/USD"]["amm"]
+      marginAddress = data["pairs"]["ETH/USD"]["margin"]
+      return [routerAddress,ammAddress,marginAddress ]
 
 
 
 def auto_trade():
     count = 0
+    routerAddress = "0x9C240130a08CEf0bc8903ccBE2EEcc731Cb7aAe5"
+    ammAddress = "0x01A3eae4edD0512d7d1e3B57eCD40A1A1b1076EE"
+    marginAddress = "0xb6815C460ED87353Af9D7e84B46659A99aB2D6F6"
+    
+    baseToken  = interface.IAmm(ammAddress).baseToken()
+    quoteToken = interface.IAmm(ammAddress).quoteToken()
+ 
     while True:    
   
          quoteAmount = margin.getPositionAccurate(marginAddress ,userRobert.address)[1]
@@ -59,13 +72,25 @@ def auto_trade():
          count+=1
          print("count", count)
 
-         time.sleep(120)  
-         if(count == 5) :
+         time.sleep(sleep)  
+         if(count %5 == 0) :
               
                quoteAmount1 = margin.getPositionAccurate(marginAddress ,userRobert.address)[1]
-               router.closePositionETH(routerAddress, quoteToken , quoteAmount=abs(quoteAmount1), deadline = deadline, trader = userRobert.address)
+               try:
+                 router.closePositionETH(routerAddress, quoteToken , quoteAmount=abs(quoteAmount1), deadline = deadline, trader = userRobert.address)
+               except  Exception as err:
+                 print(err);
                count =0
-               time.sleep(120)  
+               [routerAddress,ammAddress, marginAddress ]=fetchContractAddress();
+               print("routerAddress", routerAddress)
+               print("ammAddress", ammAddress)
+               print("marginAddress", marginAddress)
+               
+               baseToken  = interface.IAmm(ammAddress).baseToken()
+               quoteToken = interface.IAmm(ammAddress).quoteToken()
+               time.sleep(sleep)  
+ 
+        
         
     
     
@@ -73,11 +98,18 @@ def auto_trade():
 
 def main():
   
-    
-          
+      
+     
+
         try: 
             auto_trade();
             
-        except  ValueError:
-            print("something wrong ");
+        except  Exception as err:
+            print(err);
+       
+        finally:
+            print('finally')
+            time.sleep(sleep)  
+ 
+            auto_trade()
 
