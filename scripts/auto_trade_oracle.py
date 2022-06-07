@@ -55,16 +55,17 @@ def auto_trade():
             quoteAmount = margin.getPositionAccurate(marginAddress ,userRobert.address)[1]
             baseSize = margin.getPositionAccurate(marginAddress ,userRobert.address)[0]
            # print("quoteAmount",quoteAmount);
-            print("baseSize", baseSize);
+            print("baseSize", baseSize)
 
             if(baseSize< 50 * 10**18 ):
-
+                print("deposit margin")
                 router.deposit(routerAddress, baseToken, quoteToken,  200 * 10**18 ,userRobert.address )
             
-            if(quoteAmount>10000000000):
+            if(quoteAmount>200000000000):
                 # 2W close position
-                router.closePositionETH(routerAddress, quoteToken , quoteAmount=abs(quoteAmount), deadline = deadline, trader = userRobert.address)
                 print("close big position wrong")
+                router.closePosition(routerAddress,baseToken, quoteToken , quoteAmount=abs(quoteAmount), deadline = deadline, trader = userRobert.address)
+               
 
             #  # withdraw margin
             #  withdrawableAmount = margin.getWithdrawable(marginAddress, userRobert.address);
@@ -72,7 +73,7 @@ def auto_trade():
             
             # 配置开仓量 
             isLong = random.randint(0,1)
-            quoteAmountRandom = random.randint(100,5000) * 1000000
+            quoteAmountRandom = random.randint(1000,50000) * 1000000
             reserves = interface.IAmm(ammAddress).getReserves()
             pricedex = reserves[1]* 10**12/reserves[0]
             priceCex = fetchEthPrice()
