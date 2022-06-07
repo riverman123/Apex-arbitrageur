@@ -1,4 +1,3 @@
-import ccxt
 from brownie import *
 import os
 import json
@@ -12,7 +11,8 @@ load_dotenv()
 
 
 url = "https://raw.githubusercontent.com/ApeX-Protocol/config/main/contracts-test.json"
-
+priceurl = "https://api.etherscan.io/api?module=stats&action=ethprice&apikey=2QJHBURFK52GJSFSNHCJA37P6I9JC14YPK"
+                
 perp_pair = "ETH-USD-SWAP"
 PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
 userRobert = accounts.add(private_key = PRIVATE_KEY_ROBOT)
@@ -30,6 +30,12 @@ def fetchContractAddress():
       marginAddress = data["pairs"]["ETH/USD"]["margin"]
       return [routerAddress,ammAddress,marginAddress ]
 
+def fetchEthPrice():
+      response = requests.get(priceurl)
+      data = response.json()
+      #print(data)
+      
+      return  data["result"]["ethusd"]
 
 
 def auto_trade():
@@ -47,7 +53,13 @@ def auto_trade():
     while True:    
       try:
             quoteAmount = margin.getPositionAccurate(marginAddress ,userRobert.address)[1]
-            print("quoteAmount",quoteAmount);
+            baseSize = margin.getPositionAccurate(marginAddress ,userRobert.address)[0]
+           # print("quoteAmount",quoteAmount);
+            print("baseSize", baseSize);
+
+            if(baseSize< 50 * 10**18 ):
+
+                router.deposit(routerAddress, baseToken, quoteToken,  200 * 10**18 ,userRobert.address )
             
             if(quoteAmount>10000000000):
                 # 2W close position
@@ -58,20 +70,32 @@ def auto_trade():
             #  withdrawableAmount = margin.getWithdrawable(marginAddress, userRobert.address);
             #  router.withdrawETH(routerAddress,quotetoken ,  withdrawableAmount)
             
-            
+            # 配置开仓量 
             isLong = random.randint(0,1)
-            quoteAmountRandom = random.randint(50,1000) * 1000000
-            
+            quoteAmountRandom = random.randint(100,5000) * 1000000
+            reserves = interface.IAmm(ammAddress).getReserves()
+            pricedex = reserves[1]* 10**12/reserves[0]
+            priceCex = fetchEthPrice()
+            # print("pricedex:", pricedex)
+            # print("pricecex:", priceCex)
+            spread = (pricedex - float(priceCex))/float(priceCex)
+            if(spread> 0.02 ):
+                isLong = 0  
+
+    
+            if(spread < -0.02):
+                isLong = 1
+            #print("spread", spread)    
             try:
                 if(isLong): 
-                
-                    router.openPositionETHWithWallet(routerAddress,0, marginAmount, quoteAmountRandom,userRobert.address, deadline, quoteToken );
                     print("open long")
+                    router.openPositionWithMargin(routerAddress,0, marginAmount, quoteAmountRandom,userRobert.address, deadline, quoteToken, baseToken );
+                    
 
                 else:
-
-                    router.openPositionETHWithWallet(routerAddress,1, marginAmount, quoteAmountRandom,userRobert.address, deadline, quoteToken );
                     print("open short")
+                    router.openPositionWithMargin(routerAddress,1, marginAmount, quoteAmountRandom,userRobert.address, deadline, quoteToken, baseToken );
+                    
             except  Exception as err:
                 print("open position wrong!");      
                 print(err);      
@@ -84,18 +108,19 @@ def auto_trade():
                 
                 quoteAmount1 = margin.getPositionAccurate(marginAddress ,userRobert.address)[1]
                 try:
-                    router.closePositionETH(routerAddress, quoteToken , quoteAmount=abs(quoteAmount1), deadline = deadline, trader = userRobert.address)
+                    router.closePosition(routerAddress, baseToken, quoteToken , quoteAmount=abs(quoteAmount1), deadline = deadline, trader = userRobert.address)
                 except  Exception as err:
                     print("close position wrong!");  
                     print(err);
                 count =0
                 [routerAddress,ammAddress, marginAddress ]=fetchContractAddress();
-                #  print("routerAddress", routerAddress)
-                #  print("ammAddress", ammAddress)
-                #  print("marginAddress", marginAddress)
                 
                 baseToken  = interface.IAmm(ammAddress).baseToken()
                 quoteToken = interface.IAmm(ammAddress).quoteToken()
+
+                
+
+
                 time.sleep(sleep)  
       except  Exception as err:
             print(err);   

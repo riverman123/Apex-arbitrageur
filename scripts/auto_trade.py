@@ -12,6 +12,7 @@ load_dotenv()
 
 
 url = "https://raw.githubusercontent.com/ApeX-Protocol/config/main/contracts-test.json"
+priceurl = ""
 
 perp_pair = "ETH-USD-SWAP"
 PRIVATE_KEY_ROBOT = os.getenv("PRIVATE_KEY_ROBOT")
