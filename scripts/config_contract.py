@@ -9,8 +9,7 @@ userA = accounts.add(private_key= PRIVATE_KEY_USER)
 userRobert = accounts.add(private_key= PRIVATE_KEY_ROBOT )
 print(userA.address)
 
-# CONTRACT_INFO = config.CONTRACT_ADDRESS
-# Iconfig = interface.IConfig(CONTRACT_INFO["config"])
+Iconfig = interface.IConfig("0x43624493A79eF508BC9EDe792E67aABD44e3BfE8")
 
 
 
@@ -31,6 +30,6 @@ def main():
     # print(t.events)
     # print(getBeta())
     # print(Iconfig.tradingSlippage())
-    print(userA.address)
+    print(getBeta())
 
 

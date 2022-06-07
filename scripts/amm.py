@@ -27,7 +27,7 @@ def  getQuoteToken(address) :
 
 
 def main():
-    address = "0x1067e124e0c8af7c540e9e3184815f73cda5790a"
+    address = "0xa8cD3De0696Ef05eFd4f06492e14131c5A0A8aFF"
     reserves = getReserves(address)
     print(reserves[0])
     print(reserves[1])

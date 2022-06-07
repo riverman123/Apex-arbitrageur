@@ -24,7 +24,7 @@ sleep = 120
 def fetchContractAddress():
       response = requests.get(url)
       data = response.json()
-      print(data)
+      #print(data)
       routerAddress = data["router"]["address"]
       ammAddress = data["pairs"]["ETH/USD"]["amm"]
       marginAddress = data["pairs"]["ETH/USD"]["margin"]
@@ -54,7 +54,7 @@ def auto_trade():
         #  # withdraw margin
         #  withdrawableAmount = margin.getWithdrawable(marginAddress, userRobert.address);
         #  router.withdrawETH(routerAddress,quotetoken ,  withdrawableAmount)
-
+        
         
          isLong = random.randint(0,1)
          quoteAmountRandom = random.randint(50,1000) * 1000000
@@ -87,9 +87,9 @@ def auto_trade():
                  print(err);
                count =0
                [routerAddress,ammAddress, marginAddress ]=fetchContractAddress();
-               print("routerAddress", routerAddress)
-               print("ammAddress", ammAddress)
-               print("marginAddress", marginAddress)
+              #  print("routerAddress", routerAddress)
+              #  print("ammAddress", ammAddress)
+              #  print("marginAddress", marginAddress)
                
                baseToken  = interface.IAmm(ammAddress).baseToken()
                quoteToken = interface.IAmm(ammAddress).quoteToken()

@@ -78,12 +78,21 @@ def netPostion(address ):
     return netposition;
     
 def main():
-    address = "0x1171ac226a25e3a7501b85296f92e55b029fae69"
-    user = "0xAD3A45194eC873d8d6ED908590CF59F7309d6a5f"
-    position = getPositionAccurate(address,user)
-    print("user: ",position)
-    netPisition = netPostion(address)
-    print("netPisition: ",netPisition)
+    address = "0xb87e2e9ed650effeda3d5728742056954906fd74"
+    user = "0x6014F6D866F3EeC7463c7D74639185265a98C91D"
+    pnl = interface.IMargin(address).calUnrealizedPnl(user);
+    print("pnl: ", pnl)
+    position_value = interface.IMargin(address).getPosition(user)
+    print("position_value: ", position_value)
+    debtratio = interface.IMargin(address).calDebtRatio(user)
+    print("debtratio: ", debtratio)
+    #fundingfee = calFundingFee(address, user)
+   
+    # print("fundingfee: ",fundingfee)
+    # position = getPositionAccurate(address,user)
+    # print("user: ",position)
+    # netPisition = netPostion(address)
+    # print("netPisition: ",netPisition)
     # position = getPosition(SETTING["ADDRESS_ROBOT"])
     # print("user: ",position)
     # tx=  closePosition(SETTING["ADDRESS_USER"], abs(position[1]))

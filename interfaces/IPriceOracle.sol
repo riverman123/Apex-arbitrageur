@@ -27,5 +27,16 @@ interface IPriceOracle {
         bool negative
     ) external view returns (uint256 baseAmount);
 
+    function getMarkPriceInRatio(
+        address amm,
+        uint256 quoteAmount,
+        uint256 baseAmount
+    )
+        external
+        view
+        returns (uint256 resultBaseAmount,
+            uint256 resultQuoteAmount,
+            bool isIndexPrice) ; 
+
     function getPremiumFraction(address amm) external view returns (int256);
 }
